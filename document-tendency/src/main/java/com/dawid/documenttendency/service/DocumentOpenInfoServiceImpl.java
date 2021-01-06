@@ -26,8 +26,13 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
         documentOpenInfoRepository.save(documentOpenInfo);
     }
 
-    @Override
+
     public List<DocumentOpenInfo> getAll() {
         return documentOpenInfoRepository.findAll();
+    }
+
+
+    public List<DocumentOpenInfo> getPopular() {
+        return null;
     }
 }

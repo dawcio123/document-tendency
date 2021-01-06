@@ -22,4 +22,9 @@ public class TendencyController {
     public List<DocumentOpenInfo> getAll(){
         return documentOpenInfoService.getAll();
     }
+
+    @GetMapping("/popular")
+    public List<DocumentOpenInfo> getPopularDocuments(){
+        return documentOpenInfoService.getPopular();
+    }
 }

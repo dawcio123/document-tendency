@@ -12,4 +12,5 @@ public interface DocumentOpenInfoService {
 
     List<DocumentOpenInfo> getAll();
 
+    List<DocumentOpenInfo> getPopular();
 }

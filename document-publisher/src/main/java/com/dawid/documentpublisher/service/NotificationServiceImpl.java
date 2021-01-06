@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -25,9 +26,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private DocumentOpenNotification createDocOpenNotification(Document document) {
         return DocumentOpenNotification.builder()
-                .documentId(1L)
-                .userId(1L)
-                .openDate(LocalDate.now())
+                .documentId(document.getId())
+                .userId(document.getId())
+                .openDate(LocalDate.ofYearDay(2020, new Random().nextInt(30) + 1))
                 .build();
     }
 }
