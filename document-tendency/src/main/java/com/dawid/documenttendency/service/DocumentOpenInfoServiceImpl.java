@@ -5,6 +5,8 @@ import com.dawid.documenttendency.model.DocumentOpenNotificationDTO;
 import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
 
@@ -22,5 +24,10 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
                 .build();
 
         documentOpenInfoRepository.save(documentOpenInfo);
+    }
+
+    @Override
+    public List<DocumentOpenInfo> getAll() {
+        return documentOpenInfoRepository.findAll();
     }
 }
