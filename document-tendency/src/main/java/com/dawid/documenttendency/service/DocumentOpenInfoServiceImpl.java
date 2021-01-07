@@ -60,7 +60,7 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
         return  documents;
     }
 
-    private Map<Long, Long> sortPopularity(Map<Long, Long> popularDocumentById) {
+    public Map<Long, Long> sortPopularity(Map<Long, Long> popularDocumentById) {
         Map<Long, Long> topTen =
                 popularDocumentById.entrySet().stream()
                         .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
