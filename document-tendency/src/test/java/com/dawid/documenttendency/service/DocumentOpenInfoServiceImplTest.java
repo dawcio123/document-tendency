@@ -2,9 +2,7 @@ package com.dawid.documenttendency.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.*;
 
@@ -13,9 +11,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class DocumentOpenInfoServiceImplTest {
     @Autowired
-    DocumentOpenInfoServiceImpl documentOpenInfoService;
+    TrendServiceImpl trendService;
 
-    DocumentOpenInfoServiceImpl documentOpenInfoService2;
 
     @Test
     void shouldSortPopularity() {
@@ -28,7 +25,7 @@ class DocumentOpenInfoServiceImplTest {
 
 
         List<String> notSortedTest = convertToKeyList(testMap);
-        Map<String, Long> result = documentOpenInfoService.sortPopularity(testMap);
+        Map<String, Long> result = trendService.sortPopularity(testMap);
 
 
         List<String> sortedIdTest = convertToKeyList(result);
