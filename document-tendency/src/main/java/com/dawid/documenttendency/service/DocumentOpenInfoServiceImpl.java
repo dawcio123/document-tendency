@@ -6,7 +6,9 @@ import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
@@ -37,7 +39,32 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
 
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(7);
-        return documentOpenInfoRepository.findAllByOpenDateIsBetween(startDate, endDate);
+        List<DocumentOpenInfo> documentsInRange = documentOpenInfoRepository.findAllByOpenDateIsBetween(startDate, endDate);
+
+        Map<Long, Long> popularDocumentById = new HashMap<>();
+        for (DocumentOpenInfo openedDocument : documentsInRange){
+            long documentId = openedDocument.getDocumentId();
+
+            if (!popularDocumentById.containsKey(documentId)){
+                popularDocumentById.put(documentId, 1L);
+            } else {
+                Long tempValue = popularDocumentById.get(documentId);
+                popularDocumentById.put(documentId, tempValue + 1);
+            }
+        }
+
+        Map<Long, Long> topTen =
+                popularDocumentById.entrySet().stream()
+                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                        .limit(10)
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+
+        topTen.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEach(System.out::println);
+
+        return  documentsInRange;
     }
 
     public List<DocumentOpenInfo> getByDateRange() {
