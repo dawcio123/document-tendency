@@ -1,6 +1,6 @@
 package com.dawid.documenttendency.service;
 
-import com.dawid.documenttendency.model.Document;
+
 import com.dawid.documenttendency.model.DocumentOpenInfo;
 import com.dawid.documenttendency.model.DocumentOpenNotificationDTO;
 import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
 
     private DocumentOpenInfoRepository documentOpenInfoRepository;
-    private TrendService trendService;
 
-    public DocumentOpenInfoServiceImpl(DocumentOpenInfoRepository documentOpenInfoRepository, TrendService trendService) {
+
+    public DocumentOpenInfoServiceImpl(DocumentOpenInfoRepository documentOpenInfoRepository) {
         this.documentOpenInfoRepository = documentOpenInfoRepository;
-        this.trendService = trendService;
+
     }
 
     public void saveDocumentOpenInfo(DocumentOpenNotificationDTO documentOpenNotificationDTO) {
@@ -37,7 +37,10 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
     }
 
 
-
+    public List<DocumentOpenInfo> getDocumentOpenInfoFromRange(LocalDate from, LocalDate toDate) {
+        return documentOpenInfoRepository.findAllByOpenDateIsBetween(from, toDate);
+        //TODO: HandleException
+    }
 
 
 }

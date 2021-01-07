@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 public class TrendServiceImpl implements TrendService {
 
     private DocumentOpenInfoRepository documentOpenInfoRepository;
+    private DocumentOpenInfoService documentOpenInfoService;
 
-    public TrendServiceImpl(DocumentOpenInfoRepository documentOpenInfoRepository) {
+    public TrendServiceImpl(DocumentOpenInfoRepository documentOpenInfoRepository, DocumentOpenInfoService documentOpenInfoService) {
         this.documentOpenInfoRepository = documentOpenInfoRepository;
+        this.documentOpenInfoService = documentOpenInfoService;
     }
 
 
@@ -37,9 +39,9 @@ public class TrendServiceImpl implements TrendService {
 
     public List<Document> getPopular() {
 
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(7);
-        List<DocumentOpenInfo> documentsInRange = documentOpenInfoRepository.findAllByOpenDateIsBetween(startDate, endDate);
+        LocalDate toDate = LocalDate.now();
+        LocalDate from = toDate.minusDays(7);
+        List<DocumentOpenInfo> documentsInRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);
 
         Map<String, Long> popularDocumentById = calculatePopularity(documentsInRange);
         Map<String, Long> topTen = sortPopularity(popularDocumentById);
@@ -54,6 +56,8 @@ public class TrendServiceImpl implements TrendService {
 
         return  documents;
     }
+
+
 
     private List<Document> generateDocuments(Map<String, Long> topTen) {
         List<Document> documents = new ArrayList<>();
