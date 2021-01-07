@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -27,7 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
     private DocumentOpenNotification createDocOpenNotification(Document document) {
         return DocumentOpenNotification.builder()
                 .documentId(document.getId())
-                .userId(document.getId())
+                .userId(UUID.randomUUID().toString())
                 .openDate(LocalDate.ofYearDay(2021, new Random().nextInt(30) + 1))
                 .build();
     }

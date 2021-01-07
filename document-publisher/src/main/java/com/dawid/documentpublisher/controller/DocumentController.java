@@ -23,7 +23,7 @@ public class DocumentController {
 
     @GetMapping("/{id}")
     public Document getDocumentById(@PathVariable long id){
-        Document document = documentRepository.createDocument(id);
+        Document document = documentRepository.createDocument();
         notificationService.sendOpenDocumentNotification(document);
 
         return document;
