@@ -21,42 +21,43 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    private Map<String, Long> calculatePopularity(List<DocumentOpenInfo> documentsInRange) {
-        Map<String, Long> popularDocumentById = new HashMap<>();
-        for (DocumentOpenInfo openedDocument : documentsInRange){
-            String documentId = openedDocument.getDocumentId();
-
-            if (!popularDocumentById.containsKey(documentId)){
-                popularDocumentById.put(documentId, 1L);
-            } else {
-                Long tempValue = popularDocumentById.get(documentId);
-                popularDocumentById.put(documentId, tempValue + 1);
-            }
-        }
-        return popularDocumentById;
-    }
 
 
     public List<Document> getPopular() {
 
         LocalDate toDate = LocalDate.now();
         LocalDate from = toDate.minusDays(7);
-        List<DocumentOpenInfo> documentsInRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);
+        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);
 
-        Map<String, Long> popularDocumentById = calculatePopularity(documentsInRange);
-        Map<String, Long> topTen = sortPopularity(popularDocumentById);
+        Map<String, Long> documentPopularityById = calculatePopularity(documentsInDateRange);
+        Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById);
 
 
-        topTen.entrySet().stream()
+        documentPopularityByIdSorted.entrySet().stream()
                 // .sorted(Map.Entry.comparingByValue())
                 .forEach(System.out::println);
 
 
-        List<Document> documents = generateDocuments(topTen);
+        List<Document> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
 
-        return  documents;
+        return  documentsPopularity;
     }
 
+    private Map<String, Long> calculatePopularity(List<DocumentOpenInfo> documentsInDateRange) {
+        Map<String, Long> documentPopularityById = new HashMap<>();
+
+        for (DocumentOpenInfo openedDocument : documentsInDateRange){
+            String documentId = openedDocument.getDocumentId();
+
+            if (!documentPopularityById.containsKey(documentId)){
+                documentPopularityById.put(documentId, 1L);
+            } else {
+                Long currentOpeningCount = documentPopularityById.get(documentId);
+                documentPopularityById.put(documentId, currentOpeningCount + 1);
+            }
+        }
+        return documentPopularityById;
+    }
 
 
     private List<Document> generateDocuments(Map<String, Long> topTen) {
