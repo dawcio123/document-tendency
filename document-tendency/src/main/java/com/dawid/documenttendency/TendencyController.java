@@ -1,5 +1,6 @@
 package com.dawid.documenttendency;
 
+import com.dawid.documenttendency.model.Document;
 import com.dawid.documenttendency.model.DocumentOpenInfo;
 import com.dawid.documenttendency.service.DocumentOpenInfoService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class TendencyController {
     }
 
     @GetMapping("/popular")
-    public List<DocumentOpenInfo> getPopularDocuments(){
+    public List<Document> getPopularDocuments(){
         return documentOpenInfoService.getPopular();
     }
 
