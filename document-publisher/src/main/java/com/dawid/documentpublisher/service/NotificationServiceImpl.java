@@ -28,7 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
         return DocumentOpenNotification.builder()
                 .documentId(document.getId())
                 .userId(document.getId())
-                .openDate(LocalDate.ofYearDay(2020, new Random().nextInt(30) + 1))
+                .openDate(LocalDate.ofYearDay(2021, new Random().nextInt(30) + 1))
                 .build();
     }
 }

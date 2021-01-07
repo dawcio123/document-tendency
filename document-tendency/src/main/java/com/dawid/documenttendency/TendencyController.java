@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/tendencies")
 public class TendencyController {
@@ -27,4 +28,6 @@ public class TendencyController {
     public List<DocumentOpenInfo> getPopularDocuments(){
         return documentOpenInfoService.getPopular();
     }
+
+
 }
