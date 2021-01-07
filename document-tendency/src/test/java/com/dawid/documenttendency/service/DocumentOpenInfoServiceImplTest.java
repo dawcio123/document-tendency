@@ -20,25 +20,25 @@ class DocumentOpenInfoServiceImplTest {
     @Test
     void shouldSortPopularity() {
 
-        Map<Long, Long> testMap = new LinkedHashMap<>();
+        Map<String, Long> testMap = new LinkedHashMap<>();
 
-        testMap.put(3L,1L);
-        testMap.put(5L,4L);
-        testMap.put(2L,2L);
-
-
-        List<Long> notSortedTest = convertToKeyList(testMap);
-        Map<Long, Long> result = documentOpenInfoService.sortPopularity(testMap);
+        testMap.put("last",1L);
+        testMap.put("first",4L);
+        testMap.put("sec",2L);
 
 
-        List<Long> sortedIdTest = convertToKeyList(result);
+        List<String> notSortedTest = convertToKeyList(testMap);
+        Map<String, Long> result = documentOpenInfoService.sortPopularity(testMap);
 
-        Map<Long, Long> resultMap = new LinkedHashMap<>();
-        resultMap.put(5L,4L);
-        resultMap.put(2L,2L);
-        resultMap.put(3L,1L);
 
-        List<Long> sortedId = convertToKeyList(resultMap);
+        List<String> sortedIdTest = convertToKeyList(result);
+
+        Map<String, Long> resultMap = new LinkedHashMap<>();
+        resultMap.put("first",4L);
+        resultMap.put("sec",2L);
+        resultMap.put("last",1L);
+
+        List<String> sortedId = convertToKeyList(resultMap);
 
         assertTrue(sortedId.equals(sortedIdTest));
         assertFalse(sortedId.equals(notSortedTest));
@@ -46,9 +46,9 @@ class DocumentOpenInfoServiceImplTest {
 
     }
 
-    private List<Long> convertToKeyList(Map<Long, Long> resultMap) {
-        List<Long> sortedId = new ArrayList<>();
-        for (Long id : resultMap.keySet()) {
+    private List<String> convertToKeyList(Map<String, Long> resultMap) {
+        List<String> sortedId = new ArrayList<>();
+        for (String id : resultMap.keySet()) {
             sortedId.add(id);
         }
         return sortedId;

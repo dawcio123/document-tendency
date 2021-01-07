@@ -24,10 +24,10 @@ public class DocumentOpenInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private long id;
     @NotNull
-    private long documentId;
+    private String documentId;
 
     @NotNull
-    private long userId;
+    private String userId;
     @NotNull
     private LocalDate openDate;
 }

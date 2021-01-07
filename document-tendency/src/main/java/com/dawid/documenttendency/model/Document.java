@@ -9,10 +9,10 @@ import java.util.Objects;
 
 public class Document {
 
-    private Long id;
+    private String id;
     private Long openCount;
 
-    public Document(Long id, Long openCount) {
+    public Document(String id, Long openCount) {
         this.id = id;
         this.openCount = openCount;
     }
