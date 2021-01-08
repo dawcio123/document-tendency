@@ -1,6 +1,5 @@
 package com.dawid.documenttendency.service;
 
-import com.dawid.documenttendency.model.Document;
 import com.dawid.documenttendency.model.DocumentOpenInfo;
 import com.dawid.documenttendency.model.DocumentOpenNotificationDTO;
 

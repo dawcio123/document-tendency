@@ -1,19 +1,18 @@
 package com.dawid.documenttendency.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.Objects;
 
 @Data
 
-public class Document {
+public class DocumentDto {
 
-    private String id;
+    private String documentId;
     private Long openCount;
 
-    public Document(String id, Long openCount) {
-        this.id = id;
+    public DocumentDto(String id, Long openCount) {
+        this.documentId = id;
         this.openCount = openCount;
     }
 
@@ -21,12 +20,12 @@ public class Document {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Document document = (Document) o;
-        return Objects.equals(id, document.id) && Objects.equals(openCount, document.openCount);
+        DocumentDto document = (DocumentDto) o;
+        return Objects.equals(documentId, document.documentId) && Objects.equals(openCount, document.openCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, openCount);
+        return Objects.hash(documentId, openCount);
     }
 }

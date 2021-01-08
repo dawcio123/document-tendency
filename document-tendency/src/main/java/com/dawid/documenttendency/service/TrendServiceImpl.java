@@ -53,8 +53,13 @@ public class TrendServiceImpl implements TrendService {
         Map<String, DocumentTrend> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
 
         List<DocumentTrend> documentTrends = new ArrayList<>();
+
         for(String documentId : documentsWithCountedOpenings.keySet()){
             documentTrends.add(documentsWithCountedOpenings.get(documentId));
+        }
+
+        for (DocumentTrend document : documentTrends){
+            document.calculateTrend();
         }
 
         return documentTrends;
