@@ -1,14 +1,15 @@
 package com.dawid.documenttendency.service;
 
-import com.dawid.documenttendency.model.Document;
-import com.dawid.documenttendency.model.DocumentOpenInfo;
+import com.dawid.documenttendency.model.DocumentDto;
+import com.dawid.documenttendency.model.DocumentTrend;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TrendService {
 
 
 
-     List<Document> getPopular();
+     List<DocumentDto> getPopular();
+
+     List<DocumentTrend> trends();
 }

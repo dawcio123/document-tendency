@@ -1,7 +1,8 @@
 package com.dawid.documenttendency.service;
 
-import com.dawid.documenttendency.model.Document;
+import com.dawid.documenttendency.model.DocumentDto;
 import com.dawid.documenttendency.model.DocumentOpenInfo;
+import com.dawid.documenttendency.model.DocumentTrend;
 import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class TrendServiceImpl implements TrendService {
 
 
 
-    public List<Document> getPopular() {
+    public List<DocumentDto> getPopular() {
 
         LocalDate toDate = LocalDate.now();
         LocalDate from = toDate.minusDays(7);
@@ -38,10 +39,46 @@ public class TrendServiceImpl implements TrendService {
                 .forEach(System.out::println);
 
 
-        List<Document> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
+        List<DocumentDto> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
 
         return  documentsPopularity;
     }
+
+
+    public List<DocumentTrend> trends() {
+        LocalDate toDate = LocalDate.now();
+        LocalDate from = toDate.minusDays(7);
+        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);
+
+        Map<String, DocumentTrend> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
+
+        List<DocumentTrend> documentTrends = new ArrayList<>();
+        for(String documentId : documentsWithCountedOpenings.keySet()){
+            documentTrends.add(documentsWithCountedOpenings.get(documentId));
+        }
+
+        return documentTrends;
+
+    }
+
+    private Map<String, DocumentTrend> CountOpeningsForEachDocument(List<DocumentOpenInfo> documentsInDateRange) {
+        Map<String, DocumentTrend> documentsWithCountedOpenings = new HashMap<>();
+
+        for (DocumentOpenInfo openedDocument : documentsInDateRange){
+            String documentId = openedDocument.getDocumentId();
+
+            if (!documentsWithCountedOpenings.containsKey(documentId)){
+                DocumentTrend documentTrend = new DocumentTrend(documentId, new TreeMap<LocalDate, Long>());
+                documentsWithCountedOpenings.put(documentId, documentTrend);
+            }
+                DocumentTrend documentTrend = documentsWithCountedOpenings.get(documentId);
+                documentTrend.addOpenDate(openedDocument.getOpenDate());
+
+        }
+
+        return documentsWithCountedOpenings;
+    }
+
 
     private Map<String, Long> calculatePopularity(List<DocumentOpenInfo> documentsInDateRange) {
         Map<String, Long> documentPopularityById = new HashMap<>();
@@ -60,10 +97,10 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    private List<Document> generateDocuments(Map<String, Long> topTen) {
-        List<Document> documents = new ArrayList<>();
+    private List<DocumentDto> generateDocuments(Map<String, Long> topTen) {
+        List<DocumentDto> documents = new ArrayList<>();
         for (String key : topTen.keySet() ){
-            documents.add(new Document(key, topTen.get(key)));
+            documents.add(new DocumentDto(key, topTen.get(key)));
         }
         return documents;
     }
