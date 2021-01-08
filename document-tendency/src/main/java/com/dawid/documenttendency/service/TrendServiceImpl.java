@@ -61,6 +61,7 @@ public class TrendServiceImpl implements TrendService {
         for (DocumentTrend document : documentTrends){
             document.calculateTrend();
         }
+        Collections.sort(documentTrends, Collections.reverseOrder());
 
         return documentTrends;
 
