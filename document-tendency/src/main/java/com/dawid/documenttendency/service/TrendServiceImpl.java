@@ -28,17 +28,12 @@ public class TrendServiceImpl implements TrendService {
 
     public List<DocumentDto> getPopular() {
 
-        LocalDate toDate = LocalDate.now();
-        LocalDate from = toDate.minusDays(7);
-        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);
+        LocalDate fromDate = getBeginningOfPreviousWeek();
+        LocalDate toDate = fromDate.plusDays(6);
+        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
 
         Map<String, Long> documentPopularityById = calculatePopularity(documentsInDateRange);
         Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById);
-
-
-        documentPopularityByIdSorted.entrySet().stream()
-                // .sorted(Map.Entry.comparingByValue())
-                .forEach(System.out::println);
 
 
         List<DocumentDto> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
@@ -46,17 +41,17 @@ public class TrendServiceImpl implements TrendService {
         return  documentsPopularity;
     }
 
-    private int getCurrentWeekDate(LocalDate date){
-        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
-        return date.minusDays(1).get(woy);
+    private LocalDate getBeginningOfPreviousWeek(){
+        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+        LocalDate BegOfThisWeek = LocalDate.now().minusDays(dayOfWeek-1);
+        LocalDate fromDate = BegOfThisWeek.minusWeeks(1);
+        return fromDate;
     }
 
     public List<DocumentTrend> getTrends() {
 
-        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
 
-        LocalDate BegOfThisWeek = LocalDate.now().minusDays(dayOfWeek-1);
-        LocalDate fromDate = BegOfThisWeek.minusWeeks(1);
+        LocalDate fromDate = getBeginningOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
 
@@ -113,10 +108,10 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    private List<DocumentDto> generateDocuments(Map<String, Long> topTen) {
+    private List<DocumentDto> generateDocuments(Map<String, Long> documentsAndPopularity) {
         List<DocumentDto> documents = new ArrayList<>();
-        for (String key : topTen.keySet() ){
-            documents.add(new DocumentDto(key, topTen.get(key)));
+        for (String key : documentsAndPopularity.keySet() ){
+            documents.add(new DocumentDto(key, documentsAndPopularity.get(key)));
         }
         return documents;
     }
