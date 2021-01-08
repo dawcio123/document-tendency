@@ -14,6 +14,7 @@ public class DocumentTrend implements Comparable<DocumentTrend> {
     private String documentId;
     private Map<LocalDate, Long> opensAtDate;
     private Double trendValue;
+    private int OpeningCount;
     @JsonIgnore
     private SimpleRegression r = new SimpleRegression(true);
 
@@ -29,6 +30,8 @@ public class DocumentTrend implements Comparable<DocumentTrend> {
             Long currentOpeningCount = opensAtDate.get(openDate);
             opensAtDate.put(openDate, currentOpeningCount +1);
         }
+        OpeningCount ++;
+
     }
 
     public void calculateTrend(){
