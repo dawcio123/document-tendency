@@ -29,7 +29,7 @@ public class NotificationServiceImpl implements NotificationService {
         return DocumentOpenNotification.builder()
                 .documentId(document.getId())
                 .userId(UUID.randomUUID().toString())
-                .openDate(LocalDate.ofYearDay(2021, new Random().nextInt(30) + 1))
+                .openDate(LocalDate.of(2021, 1,new Random().nextInt(9) + 1))
                 .build();
     }
 }

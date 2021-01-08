@@ -21,8 +21,12 @@ public class DocumentController {
     }
 
 
-    @GetMapping("/{id}")
-    public Document getDocumentById(@PathVariable long id){
+    @GetMapping
+    public Document getDocumentById(){
+        for (int i = 0; i <100; i++  ){
+            Document document = documentRepository.createDocument();
+            notificationService.sendOpenDocumentNotification(document);
+        }
         Document document = documentRepository.createDocument();
         notificationService.sendOpenDocumentNotification(document);
 
