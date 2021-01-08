@@ -7,6 +7,8 @@ import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,11 +46,19 @@ public class TrendServiceImpl implements TrendService {
         return  documentsPopularity;
     }
 
+    private int getCurrentWeekDate(LocalDate date){
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        return date.minusDays(1).get(woy);
+    }
 
     public List<DocumentTrend> getTrends() {
-        LocalDate toDate = LocalDate.now();
-        LocalDate from = toDate.minusDays(7);
-        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);
+
+        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+
+        LocalDate BegOfThisWeek = LocalDate.now().minusDays(dayOfWeek-1);
+        LocalDate fromDate = BegOfThisWeek.minusWeeks(1);
+        LocalDate toDate = fromDate.plusDays(6);
+        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
 
         Map<String, DocumentTrend> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
 
