@@ -45,7 +45,7 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    public List<DocumentTrend> trends() {
+    public List<DocumentTrend> getTrends() {
         LocalDate toDate = LocalDate.now();
         LocalDate from = toDate.minusDays(7);
         List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(from, toDate);

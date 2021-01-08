@@ -36,7 +36,7 @@ public class TendencyController {
 
     @GetMapping("/trending")
     public List<DocumentTrend> getTrendingDocuments(){
-        return trendService.trends();
+        return trendService.getTrends();
     }
 
 
