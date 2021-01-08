@@ -11,5 +11,7 @@ public interface TrendService {
 
      List<DocumentDto> getPopular();
 
-     List<DocumentTrend> getTrends();
+
+
+     List<DocumentTrend> getTrendsForPreviousWeek();
 }

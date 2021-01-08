@@ -48,7 +48,12 @@ public class TrendServiceImpl implements TrendService {
         return fromDate;
     }
 
-    public List<DocumentTrend> getTrends() {
+
+
+    public List<DocumentTrend> getTrendsForPreviousWeek() {
+        return getTrendsForWeek(getBeginningOfPreviousWeek());
+    }
+    private List<DocumentTrend> getTrendsForWeek(LocalDate firstDayOfWeek) {
 
 
         LocalDate fromDate = getBeginningOfPreviousWeek();
@@ -71,6 +76,8 @@ public class TrendServiceImpl implements TrendService {
         return documentTrends;
 
     }
+
+
 
     private Map<String, DocumentTrend> CountOpeningsForEachDocument(List<DocumentOpenInfo> documentsInDateRange) {
         Map<String, DocumentTrend> documentsWithCountedOpenings = new HashMap<>();

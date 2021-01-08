@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -36,7 +37,7 @@ public class TendencyController {
 
     @GetMapping("/trending")
     public List<DocumentTrend> getTrendingDocuments(){
-        return trendService.getTrends();
+        return trendService.getTrendsForPreviousWeek();
     }
 
 
