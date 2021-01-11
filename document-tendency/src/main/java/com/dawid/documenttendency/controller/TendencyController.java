@@ -17,27 +17,18 @@ import java.util.List;
 @RequestMapping("/tendencies")
 public class TendencyController {
 
-    private DocumentOpenInfoService documentOpenInfoService;
+
     private TrendService trendService;
 
-    public TendencyController(DocumentOpenInfoService documentOpenInfoService, TrendService trendService) {
-        this.documentOpenInfoService = documentOpenInfoService;
+    public TendencyController(TrendService trendService) {
         this.trendService = trendService;
     }
 
-    @GetMapping
-    public List<DocumentOpenInfo> getAll(){
-        return documentOpenInfoService.getAll();
-    }
+
 
     @GetMapping("/popular")
     public List<DocumentDto> getPopularDocuments(@RequestParam(required = false) Integer resultLimit){
         return trendService.getPopular(resultLimit);
-    }
-
-    @GetMapping("/pop")
-    public DocumentDto getPopularDocument(){
-        return trendService.getPopular(1).get(0);
     }
 
     @GetMapping("/trending")

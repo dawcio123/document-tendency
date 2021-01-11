@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class DocumentOpenNotificationDTO {
+public class DocumentOpenNotification {
 
 
 
@@ -17,7 +17,7 @@ public class DocumentOpenNotificationDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate openDate;
 
-    public DocumentOpenNotificationDTO(String documentId, String userId, LocalDate localDate) {
+    public DocumentOpenNotification(String documentId, String userId, LocalDate localDate) {
         this.documentId = documentId;
         this.userId = userId;
         this.openDate = localDate;

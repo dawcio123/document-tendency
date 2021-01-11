@@ -1,7 +1,6 @@
 package com.dawid.documenttendency.service;
 
-import com.dawid.documenttendency.model.DocumentOpenNotificationDTO;
-import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
+import com.dawid.documenttendency.model.DocumentOpenNotification;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,7 @@ public class RabbitMQListener {
     }
 
     @RabbitListener(queues = DOCUMENT_OPEN)
-    public void documentOpenNotificationListener(DocumentOpenNotificationDTO documentOpenNotificationDTO) {
-        System.out.println(documentOpenNotificationDTO.toString());
-        documentOpenInfoService.saveDocumentOpenInfo(documentOpenNotificationDTO);
+    public void documentOpenNotificationListener(DocumentOpenNotification documentOpenNotification) {
+        documentOpenInfoService.saveDocumentOpenInfo(documentOpenNotification);
     }
 }

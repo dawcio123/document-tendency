@@ -2,7 +2,7 @@ package com.dawid.documenttendency.service;
 
 
 import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentOpenNotificationDTO;
+import com.dawid.documenttendency.model.DocumentOpenNotification;
 import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +21,16 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
 
     }
 
-    public void saveDocumentOpenInfo(DocumentOpenNotificationDTO documentOpenNotificationDTO) {
+    public void saveDocumentOpenInfo(DocumentOpenNotification documentOpenNotification) {
         DocumentOpenInfo documentOpenInfo =  DocumentOpenInfo.builder()
-                .documentId(documentOpenNotificationDTO.getDocumentId())
-                .userId(documentOpenNotificationDTO.getUserId())
-                .openDate(documentOpenNotificationDTO.getOpenDate())
+                .documentId(documentOpenNotification.getDocumentId())
+                .userId(documentOpenNotification.getUserId())
+                .openDate(documentOpenNotification.getOpenDate())
                 .build();
 
         documentOpenInfoRepository.save(documentOpenInfo);
     }
 
-
-    public List<DocumentOpenInfo> getAll() {
-        return documentOpenInfoRepository.findAll();
-    }
 
 
     public List<DocumentOpenInfo> getDocumentOpenInfoFromRange(LocalDate from, LocalDate toDate) {
