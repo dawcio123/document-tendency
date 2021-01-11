@@ -1,8 +1,8 @@
-package com.dawid.documenttendency;
+package com.dawid.documenttendency.controller;
 
 import com.dawid.documenttendency.model.DocumentDto;
 import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentTrend;
+import com.dawid.documenttendency.model.DocumentTrendInfo;
 import com.dawid.documenttendency.service.DocumentOpenInfoService;
 import com.dawid.documenttendency.service.TrendService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +35,13 @@ public class TendencyController {
         return trendService.getPopular(resultLimit);
     }
 
+    @GetMapping("/pop")
+    public DocumentDto getPopularDocument(){
+        return trendService.getPopular(1).get(0);
+    }
+
     @GetMapping("/trending")
-    public List<DocumentTrend> getTrendingDocuments(){
+    public List<DocumentTrendInfo> getTrendingDocuments(){
         return trendService.getTrendsForPreviousWeek();
     }
 

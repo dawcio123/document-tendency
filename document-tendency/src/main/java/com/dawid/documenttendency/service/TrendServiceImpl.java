@@ -2,13 +2,11 @@ package com.dawid.documenttendency.service;
 
 import com.dawid.documenttendency.model.DocumentDto;
 import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentTrend;
+import com.dawid.documenttendency.model.DocumentTrendInfo;
 import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,18 +22,18 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-
-
     public List<DocumentDto> getPopular(Integer resultLimit) {
-        if (resultLimit == null){
-            resultLimit =10;
+        if (resultLimit == null) {
+            resultLimit = 10;
         }
 
 
-        LocalDate fromDate = getBeginningOfPreviousWeek();
+        LocalDate fromDate = getFirstDayOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
-
+        if (documentsInDateRange.size() == 0) {
+            throw new NoSuchElementException();
+        }
         Map<String, Long> documentPopularityById = calculatePopularity(documentsInDateRange);
 
         Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById, resultLimit);
@@ -43,59 +41,64 @@ public class TrendServiceImpl implements TrendService {
 
         List<DocumentDto> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
 
-        return  documentsPopularity;
+        return documentsPopularity;
     }
 
-    private LocalDate getBeginningOfPreviousWeek(){
+    public List<DocumentTrendInfo> getTrendsForPreviousWeek() {
+        return getTrendsForWeek(getFirstDayOfPreviousWeek());
+    }
+
+
+    private LocalDate getFirstDayOfPreviousWeek() {
         int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
-        LocalDate BegOfThisWeek = LocalDate.now().minusDays(dayOfWeek-1);
+        LocalDate BegOfThisWeek = LocalDate.now().minusDays(dayOfWeek - 1);
         LocalDate fromDate = BegOfThisWeek.minusWeeks(1);
         return fromDate;
     }
 
 
-
-    public List<DocumentTrend> getTrendsForPreviousWeek() {
-        return getTrendsForWeek(getBeginningOfPreviousWeek());
-    }
-    private List<DocumentTrend> getTrendsForWeek(LocalDate firstDayOfWeek) {
+    private List<DocumentTrendInfo> getTrendsForWeek(LocalDate firstDayOfWeek) {
 
 
-        LocalDate fromDate = getBeginningOfPreviousWeek();
+        LocalDate fromDate = firstDayOfWeek;
         LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
 
-        Map<String, DocumentTrend> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
+        Map<String, DocumentTrendInfo> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
 
-        List<DocumentTrend> documentTrends = new ArrayList<>();
-
-        for(String documentId : documentsWithCountedOpenings.keySet()){
-            documentTrends.add(documentsWithCountedOpenings.get(documentId));
-        }
-
-        for (DocumentTrend document : documentTrends){
-            document.calculateTrend();
-        }
-        Collections.sort(documentTrends, Collections.reverseOrder());
+        List<DocumentTrendInfo> documentTrends = getDocumentTrendInfos(documentsWithCountedOpenings);
 
         return documentTrends;
 
     }
 
+    private List<DocumentTrendInfo> getDocumentTrendInfos(Map<String, DocumentTrendInfo> documentsWithCountedOpenings) {
+        List<DocumentTrendInfo> documentTrends = new ArrayList<>();
+
+        for (String documentId : documentsWithCountedOpenings.keySet()) {
+            documentTrends.add(documentsWithCountedOpenings.get(documentId));
+        }
+
+        for (DocumentTrendInfo document : documentTrends) {
+            document.calculateTrend();
+        }
+        Collections.sort(documentTrends, Collections.reverseOrder());
+        return documentTrends;
+    }
 
 
-    private Map<String, DocumentTrend> CountOpeningsForEachDocument(List<DocumentOpenInfo> documentsInDateRange) {
-        Map<String, DocumentTrend> documentsWithCountedOpenings = new HashMap<>();
+    private Map<String, DocumentTrendInfo> CountOpeningsForEachDocument(List<DocumentOpenInfo> documentsInDateRange) {
+        Map<String, DocumentTrendInfo> documentsWithCountedOpenings = new HashMap<>();
 
-        for (DocumentOpenInfo openedDocument : documentsInDateRange){
+        for (DocumentOpenInfo openedDocument : documentsInDateRange) {
             String documentId = openedDocument.getDocumentId();
 
-            if (!documentsWithCountedOpenings.containsKey(documentId)){
-                DocumentTrend documentTrend = new DocumentTrend(documentId, new TreeMap<LocalDate, Long>());
+            if (!documentsWithCountedOpenings.containsKey(documentId)) {
+                DocumentTrendInfo documentTrend = new DocumentTrendInfo(documentId, new TreeMap<LocalDate, Long>());
                 documentsWithCountedOpenings.put(documentId, documentTrend);
             }
-                DocumentTrend documentTrend = documentsWithCountedOpenings.get(documentId);
-                documentTrend.addOpenDate(openedDocument.getOpenDate());
+            DocumentTrendInfo documentTrend = documentsWithCountedOpenings.get(documentId);
+            documentTrend.addOpenDate(openedDocument.getOpenDate());
 
         }
 
@@ -106,10 +109,10 @@ public class TrendServiceImpl implements TrendService {
     private Map<String, Long> calculatePopularity(List<DocumentOpenInfo> documentsInDateRange) {
         Map<String, Long> documentPopularityById = new HashMap<>();
 
-        for (DocumentOpenInfo openedDocument : documentsInDateRange){
+        for (DocumentOpenInfo openedDocument : documentsInDateRange) {
             String documentId = openedDocument.getDocumentId();
 
-            if (!documentPopularityById.containsKey(documentId)){
+            if (!documentPopularityById.containsKey(documentId)) {
                 documentPopularityById.put(documentId, 1L);
             } else {
                 Long currentOpeningCount = documentPopularityById.get(documentId);
@@ -122,7 +125,7 @@ public class TrendServiceImpl implements TrendService {
 
     private List<DocumentDto> generateDocuments(Map<String, Long> documentsAndPopularity) {
         List<DocumentDto> documents = new ArrayList<>();
-        for (String key : documentsAndPopularity.keySet() ){
+        for (String key : documentsAndPopularity.keySet()) {
             documents.add(new DocumentDto(key, documentsAndPopularity.get(key)));
         }
         return documents;
@@ -137,8 +140,6 @@ public class TrendServiceImpl implements TrendService {
                                 Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         return sortedAndLimited;
     }
-
-
 
 
     public List<DocumentOpenInfo> getByDateRange() {
