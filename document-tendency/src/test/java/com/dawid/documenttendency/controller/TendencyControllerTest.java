@@ -79,4 +79,23 @@ class TendencyControllerTest {
 
 
     }
+
+    @Test
+    @Sql("/scripts/INIT_DATA_FOR_FEW_WEEKS.sql")
+    void shouldCountDocumentOpenedOneTimeEveryDayforLastWeek() throws Exception {
+
+
+
+        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
+        List<DocumentDto> resultList = Arrays.asList(result.getBody());
+
+        assertEquals(1, resultList.size());
+        assertEquals(7, resultList.get(0).getOpenCount());
+        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
+
+
+
+
+
+    }
 }
