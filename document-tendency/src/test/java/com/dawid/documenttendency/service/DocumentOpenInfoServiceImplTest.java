@@ -25,7 +25,8 @@ class DocumentOpenInfoServiceImplTest {
 
 
         List<String> notSortedTest = convertToKeyList(testMap);
-        Map<String, Long> result = trendService.sortPopularity(testMap);
+        Integer resultsLimit = 10;
+        Map<String, Long> result = trendService.sortPopularity(testMap, resultsLimit);
 
 
         List<String> sortedIdTest = convertToKeyList(result);

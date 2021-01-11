@@ -10,6 +10,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @Testcontainers
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class DocumentOpenInfoRepositoryTest {
 
     @Container
@@ -49,6 +50,17 @@ class DocumentOpenInfoRepositoryTest {
 
         assertEquals(1, documentOpenInfoList.size());
     }
+
+    @Test
+    @Sql("/scripts/INIT_FIVE_DOCUMENTS.sql")
+    void shouldReturnFiveEntries(){
+
+        List<DocumentOpenInfo> documentOpenInfoList = documentOpenInfoRepository.findAll();
+
+        assertEquals(5, documentOpenInfoList.size());
+        assertNotEquals(4,documentOpenInfoList.size());
+    }
+
 
     public DocumentOpenInfo createDocumentOpenInfo(String documentId, String userId, LocalDate openDate){
         return DocumentOpenInfo.builder()

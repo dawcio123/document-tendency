@@ -9,7 +9,7 @@ public interface TrendService {
 
 
 
-     List<DocumentDto> getPopular();
+     List<DocumentDto> getPopular(Integer resultLimit);
 
 
 

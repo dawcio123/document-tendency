@@ -26,14 +26,18 @@ public class TrendServiceImpl implements TrendService {
 
 
 
-    public List<DocumentDto> getPopular() {
+    public List<DocumentDto> getPopular(Integer resultLimit) {
 
         LocalDate fromDate = getBeginningOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
 
         Map<String, Long> documentPopularityById = calculatePopularity(documentsInDateRange);
-        Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById);
+
+        if (resultLimit == null){
+            resultLimit =10;
+        }
+        Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById, resultLimit);
 
 
         List<DocumentDto> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
@@ -123,11 +127,11 @@ public class TrendServiceImpl implements TrendService {
         return documents;
     }
 
-    public Map<String, Long> sortPopularity(Map<String, Long> popularDocumentById) {
+    public Map<String, Long> sortPopularity(Map<String, Long> popularDocumentById, int limit) {
         Map<String, Long> topTen =
                 popularDocumentById.entrySet().stream()
                         .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-                        .limit(10)
+                        .limit(limit)
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         return topTen;

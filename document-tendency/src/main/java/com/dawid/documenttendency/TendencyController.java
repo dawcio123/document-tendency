@@ -7,9 +7,9 @@ import com.dawid.documenttendency.service.DocumentOpenInfoService;
 import com.dawid.documenttendency.service.TrendService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -31,8 +31,8 @@ public class TendencyController {
     }
 
     @GetMapping("/popular")
-    public List<DocumentDto> getPopularDocuments(){
-        return trendService.getPopular();
+    public List<DocumentDto> getPopularDocuments(@RequestParam(required = false) Integer resultLimit){
+        return trendService.getPopular(resultLimit);
     }
 
     @GetMapping("/trending")
