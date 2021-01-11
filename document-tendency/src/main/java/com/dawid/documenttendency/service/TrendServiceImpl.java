@@ -128,13 +128,13 @@ public class TrendServiceImpl implements TrendService {
     }
 
     public Map<String, Long> sortPopularity(Map<String, Long> popularDocumentById, int limit) {
-        Map<String, Long> topTen =
+        Map<String, Long> sortedAndLimited =
                 popularDocumentById.entrySet().stream()
                         .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                         .limit(limit)
                         .collect(Collectors.toMap(
                                 Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        return topTen;
+        return sortedAndLimited;
     }
 
 
