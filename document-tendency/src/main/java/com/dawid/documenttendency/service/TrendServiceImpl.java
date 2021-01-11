@@ -1,5 +1,7 @@
 package com.dawid.documenttendency.service;
 
+import com.dawid.documenttendency.exception.DocumentException;
+import com.dawid.documenttendency.exception.NoDocumentInfoFoundException;
 import com.dawid.documenttendency.model.DocumentDto;
 import com.dawid.documenttendency.model.DocumentOpenInfo;
 import com.dawid.documenttendency.model.DocumentTrendInfo;
@@ -9,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.dawid.documenttendency.exception.DocumentError.DOCUMENT_OPEN_INFO_NOT_FOUND;
 
 @Service
 public class TrendServiceImpl implements TrendService {
@@ -30,7 +34,7 @@ public class TrendServiceImpl implements TrendService {
 
         LocalDate fromDate = getFirstDayOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
-        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
+        List<DocumentOpenInfo> documentsInDateRange = getDocumentOpenInfos(fromDate, toDate);
         if (documentsInDateRange.size() == 0) {
             throw new NoSuchElementException();
         }
@@ -62,13 +66,23 @@ public class TrendServiceImpl implements TrendService {
 
         LocalDate fromDate = firstDayOfWeek;
         LocalDate toDate = fromDate.plusDays(6);
-        List<DocumentOpenInfo> documentsInDateRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
+        List<DocumentOpenInfo> documentsInDateRange = getDocumentOpenInfos(fromDate, toDate);
 
         Map<String, DocumentTrendInfo> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
 
         List<DocumentTrendInfo> documentTrends = getDocumentTrendInfos(documentsWithCountedOpenings);
 
         return documentTrends;
+
+    }
+
+    private List<DocumentOpenInfo> getDocumentOpenInfos(LocalDate fromDate, LocalDate toDate) {
+        List<DocumentOpenInfo> documentOpenInfoFromRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
+        if (documentOpenInfoFromRange.size() == 0){
+            throw new DocumentException(DOCUMENT_OPEN_INFO_NOT_FOUND);
+        }
+
+        return documentOpenInfoFromRange;
 
     }
 

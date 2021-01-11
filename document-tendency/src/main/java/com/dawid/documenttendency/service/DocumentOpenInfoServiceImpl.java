@@ -39,7 +39,7 @@ public class DocumentOpenInfoServiceImpl implements DocumentOpenInfoService {
 
     public List<DocumentOpenInfo> getDocumentOpenInfoFromRange(LocalDate from, LocalDate toDate) {
         return documentOpenInfoRepository.findAllByOpenDateIsBetween(from, toDate);
-        //TODO: HandleException
+
     }
 
 
