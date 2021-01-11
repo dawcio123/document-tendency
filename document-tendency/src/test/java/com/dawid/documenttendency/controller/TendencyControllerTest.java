@@ -2,9 +2,7 @@ package com.dawid.documenttendency.controller;
 
 
 import com.dawid.documenttendency.model.DocumentDto;
-import com.dawid.documenttendency.model.DocumentOpenInfo;
-
-import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +23,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -48,42 +46,13 @@ class TendencyControllerTest {
 
 
     @Autowired
-    private TendencyController tendencyController;
-
-    @Autowired
     public TestRestTemplate testRestTemplate;
 
-    @Autowired
-    private DocumentOpenInfoRepository documentOpenInfoRepository;
 
     @Test
-    @Sql("/scripts/INIT_FIVE_DOCUMENTS.sql")
-    void shouldReturnDocumentWithOpeningCount() throws Exception {
-        List<DocumentOpenInfo> documentOpenInfoList = documentOpenInfoRepository.findAll();
-
-        assertEquals(5, documentOpenInfoList.size());
-        assertNotEquals(4, documentOpenInfoList.size());
-
-
-        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
-        List<DocumentDto> resultList = Arrays.asList(result.getBody());
-
-        assertEquals(1, resultList.size());
-        assertEquals(5, resultList.get(0).getOpenCount());
-        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
-
-
-        ResponseEntity<DocumentDto> result2 = testRestTemplate.getForEntity("/tendencies/pop", DocumentDto.class);
-
-        assertEquals(5, result2.getBody().getOpenCount());
-
-
-    }
-
-    @Test
+    @DisplayName("JUNIOR - Should count document opening only from last week")
     @Sql("/scripts/INIT_DATA_FOR_FEW_WEEKS.sql")
-    void shouldCountDocumentOpenedOneTimeEveryDayforLastWeek() throws Exception {
-
+    void shouldCountDocumentOpenedOnlyForLastWeek() throws Exception {
 
 
         ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
@@ -94,8 +63,48 @@ class TendencyControllerTest {
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
 
 
+    }
 
 
+    @Test
+    @DisplayName("JUNIOR - Should return most popular document")
+    @Sql("/scripts/INIT_DATA_MOST_POPULAR.sql")
+    void shouldGetMostPopularDocumentFromLastWeek() throws Exception {
+
+
+        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
+        List<DocumentDto> resultList = Arrays.asList(result.getBody());
+
+
+        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
 
     }
+
+
+    @Test
+    @DisplayName("JUNIOR - Should return popular documents list in descending order")
+
+    @Sql("/scripts/INIT_DATA_MOST_POPULAR.sql")
+    void shouldReturnPopularDescending() throws Exception {
+
+
+        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
+        List<DocumentDto> resultList = Arrays.asList(result.getBody());
+
+
+        assertEquals(14, resultList.get(0).getOpenCount());
+        assertNotEquals(13, resultList.get(0).getOpenCount());
+        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
+
+        assertEquals(7, resultList.get(1).getOpenCount());
+        assertNotEquals(6, resultList.get(1).getOpenCount());
+        assertEquals("Xb39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(1).getDocumentId());
+
+        assertEquals(4, resultList.get(2).getOpenCount());
+        assertNotEquals(3, resultList.get(2).getOpenCount());
+        assertEquals("Yb39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(2).getDocumentId());
+
+    }
+
+
 }

@@ -15,7 +15,7 @@ class DocumentOpenInfoServiceImplTest {
 
 
     @Test
-    void shouldSortPopularity() {
+    void shouldSortByMostPopular() {
 
         Map<String, Long> testMap = new LinkedHashMap<>();
 
