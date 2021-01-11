@@ -1,0 +1,2 @@
+INSERT INTO DOCUMENT_OPEN_INFO (documentId, userId, openDate)
+VALUES ("b39280b4-5eed-4bf1-9555-62b5f4e18489","5ee49edc-b0f3-498b-ad2c-36c8e38e3064",2021-01-03)
