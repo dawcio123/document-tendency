@@ -27,6 +27,10 @@ public class TrendServiceImpl implements TrendService {
 
 
     public List<DocumentDto> getPopular(Integer resultLimit) {
+        if (resultLimit == null){
+            resultLimit =10;
+        }
+
 
         LocalDate fromDate = getBeginningOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
@@ -34,9 +38,6 @@ public class TrendServiceImpl implements TrendService {
 
         Map<String, Long> documentPopularityById = calculatePopularity(documentsInDateRange);
 
-        if (resultLimit == null){
-            resultLimit =10;
-        }
         Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById, resultLimit);
 
 
