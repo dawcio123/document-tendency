@@ -20,7 +20,7 @@ public class DocumentTrendAggregate {
     }
 
     private final double OPENING_PERCENTILE = 5.0;
-    private final double TREND_MINIMAL_VALUE = 0.1;
+    private final double TREND_MINIMAL_VALUE = 1.0;
 
 
 
