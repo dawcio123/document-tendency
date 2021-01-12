@@ -48,11 +48,9 @@ public class TrendServiceImpl implements TrendService {
         return documentsPopularity;
     }
 
-    public List<DocumentTrendInfo> getTrendsForPreviousWeek() {
-        return getTrendsForWeek(getFirstDayOfPreviousWeek());
-    }
 
-    public List<DocumentTrendInfo> getTrendsForPreviousWeek2() {
+
+    public List<DocumentTrendInfo> getTrendsForPreviousWeek() {
         return getTrends(getFirstDayOfPreviousWeek());
     }
 
@@ -65,21 +63,6 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    private List<DocumentTrendInfo> getTrendsForWeek(LocalDate firstDayOfWeek) {
-
-
-        LocalDate fromDate = firstDayOfWeek;
-        LocalDate toDate = fromDate.plusDays(6);
-        List<DocumentOpenInfo> documentsInDateRange = getDocumentOpenInfos(fromDate, toDate);
-
-        Map<String, DocumentTrendInfo> documentsWithCountedOpenings = CountOpeningsForEachDocument(documentsInDateRange);
-
-        List<DocumentTrendInfo> documentTrends = getDocumentTrendInfos(documentsWithCountedOpenings);
-        DocumentTrendAggregate documentTrendAggregate = new DocumentTrendAggregate();
-        documentTrendAggregate.setDocumentTrendInfoList(documentTrends);
-        return documentTrends;
-
-    }
 
     private List<DocumentTrendInfo> getTrends(LocalDate firstDayOfWeek) {
 
@@ -108,38 +91,9 @@ public class TrendServiceImpl implements TrendService {
 
     }
 
-    private List<DocumentTrendInfo> getDocumentTrendInfos(Map<String, DocumentTrendInfo> documentsWithCountedOpenings) {
-        List<DocumentTrendInfo> documentTrends = new ArrayList<>();
-
-        for (String documentId : documentsWithCountedOpenings.keySet()) {
-            documentTrends.add(documentsWithCountedOpenings.get(documentId));
-        }
-
-        for (DocumentTrendInfo document : documentTrends) {
-            document.calculateTrend();
-        }
-        Collections.sort(documentTrends, Collections.reverseOrder());
-        return documentTrends;
-    }
 
 
-    private Map<String, DocumentTrendInfo> CountOpeningsForEachDocument(List<DocumentOpenInfo> documentsInDateRange) {
-        Map<String, DocumentTrendInfo> documentsWithCountedOpenings = new HashMap<>();
 
-        for (DocumentOpenInfo openedDocument : documentsInDateRange) {
-            String documentId = openedDocument.getDocumentId();
-
-            if (!documentsWithCountedOpenings.containsKey(documentId)) {
-                DocumentTrendInfo documentTrend = new DocumentTrendInfo(documentId, new TreeMap<LocalDate, Long>());
-                documentsWithCountedOpenings.put(documentId, documentTrend);
-            }
-            DocumentTrendInfo documentTrend = documentsWithCountedOpenings.get(documentId);
-            documentTrend.addOpenDate(openedDocument.getOpenDate());
-
-        }
-
-        return documentsWithCountedOpenings;
-    }
 
     private List<DocumentTrendInfo> generateDocumentTrendInfos(List<DocumentOpenInfo> documentsInDateRange) {
         Map<String, DocumentTrendInfo> documentsWithCountedOpenings = new HashMap<>();
@@ -155,6 +109,11 @@ public class TrendServiceImpl implements TrendService {
             documentTrend.addOpenDate(openedDocument.getOpenDate());
 
         }
+        List<DocumentTrendInfo> documentTrends = getDocumentTrendInfoList(documentsWithCountedOpenings);
+        return documentTrends;
+    }
+
+    private List<DocumentTrendInfo> getDocumentTrendInfoList(Map<String, DocumentTrendInfo> documentsWithCountedOpenings) {
         List<DocumentTrendInfo> documentTrends = new ArrayList<>();
 
         for (String documentId : documentsWithCountedOpenings.keySet()) {
@@ -162,7 +121,6 @@ public class TrendServiceImpl implements TrendService {
         }
         return documentTrends;
     }
-
 
 
     private Map<String, Long> calculatePopularity(List<DocumentOpenInfo> documentsInDateRange) {
@@ -201,10 +159,4 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    public List<DocumentOpenInfo> getByDateRange() {
-
-        LocalDate endDate = LocalDate.parse("2021-01-07");
-        LocalDate startDate = LocalDate.parse("2021-01-01");
-        return documentOpenInfoRepository.findAllByOpenDateIsBetween(startDate, endDate);
-    }
 }

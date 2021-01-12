@@ -12,6 +12,7 @@ import java.util.Map;
 public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
 
     private String documentId;
+    @JsonIgnore
     private Map<LocalDate, Long> opensAtDate;
     private Double trendValue;
     private int OpeningCount;
