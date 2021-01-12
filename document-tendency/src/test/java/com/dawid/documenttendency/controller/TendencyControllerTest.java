@@ -2,6 +2,8 @@ package com.dawid.documenttendency.controller;
 
 
 import com.dawid.documenttendency.model.DocumentDto;
+import com.dawid.documenttendency.model.DocumentTrendAggregate;
+import com.dawid.documenttendency.model.DocumentTrendInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -106,5 +108,40 @@ class TendencyControllerTest {
 
     }
 
+    @Test
+    @DisplayName("MID - Should return trending document with min set trend")
+    @Sql("/scripts/INIT_DATA_FOR_TENDENCY_LAST_WEEK.sql")
+    void shouldReturnTrendingDocument() throws Exception {
+
+
+        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendInfo[].class);
+        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+
+
+        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
+        assertTrue(resultList.get(0).getTrendValue() >= DocumentTrendAggregate.TREND_MINIMAL_VALUE);
+
+
+    }
+
+    @Test
+    @DisplayName("MID - Should return list with trending documents sorted")
+    @Sql("/scripts/INIT_DATA_FOR_TENDENCIES_FROM_LAST_WEEK.sql")
+    void shouldReturnTrendingDocuments() throws Exception {
+
+
+        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendInfo[].class);
+        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+
+        double trendValue1 = resultList.get(0).getTrendValue();
+        double trendValue2 = resultList.get(1).getTrendValue();
+        double trendValue3 = resultList.get(2).getTrendValue();
+
+        assertEquals(3, resultList.size());
+        assertTrue(trendValue1 > trendValue2);
+        assertTrue(trendValue2 > trendValue3);
+
+
+    }
 
 }

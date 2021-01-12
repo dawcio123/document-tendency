@@ -14,33 +14,22 @@ public class DocumentTrendAggregate {
     private int openingsSum;
 
 
-
     public int getOpeningsSum() {
         return openingsSum;
     }
 
     private final double OPENING_PERCENTILE = 5.0;
-    private final double TREND_MINIMAL_VALUE = 1.0;
-
+    public static final double TREND_MINIMAL_VALUE = 1.0;
 
 
     public void setDocumentTrendInfoList(List<DocumentTrendInfo> documentTrendInfoList) {
         this.documentTrendInfoList = documentTrendInfoList;
     }
 
-    private int calculatePercentileIndex(){
+    private int calculatePercentileIndex() {
         Collections.sort(documentTrendInfoList);
-        return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documentTrendInfoList.size()) ;
+        return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documentTrendInfoList.size());
 
-    }
-
-
-    int calculateOpeningsSum(List<DocumentTrendInfo> documentTrendInfoList){
-        int openingsSum = 0;
-        for (DocumentTrendInfo documentTrendInfo : documentTrendInfoList){
-            openingsSum += documentTrendInfo.getOpeningCount();
-        }
-        return openingsSum;
     }
 
     public List<DocumentTrendInfo> getListWithTrends() {
@@ -53,27 +42,38 @@ public class DocumentTrendAggregate {
 
     }
 
+
+    int calculateOpeningsSum(List<DocumentTrendInfo> documentTrendInfoList) {
+        int openingsSum = 0;
+        for (DocumentTrendInfo documentTrendInfo : documentTrendInfoList) {
+            openingsSum += documentTrendInfo.getOpeningCount();
+        }
+        return openingsSum;
+    }
+
+
+
     private List<DocumentTrendInfo> cutPercintile(List<DocumentTrendInfo> documentTrendInfoList, int percintileIndex) {
         List<DocumentTrendInfo> result = new ArrayList<>();
 
         Collections.sort(documentTrendInfoList, new OpeningComparator());
 
 
-        for (int i = percintileIndex; i < documentTrendInfoList.size(); i ++){
+        for (int i = percintileIndex; i < documentTrendInfoList.size(); i++) {
             DocumentTrendInfo documentTrendInfo = documentTrendInfoList.get(i);
-            if (documentTrendInfo.getTrendValue() > TREND_MINIMAL_VALUE){
+            if (documentTrendInfo.getTrendValue() >= TREND_MINIMAL_VALUE) {
                 result.add(documentTrendInfoList.get(i));
             }
 
         }
-        if (result.size() == 0){
+        if (result.size() == 0) {
             throw new DocumentException(DocumentError.NO_DOCUMENTS_WITH_RAPID_TREND_FOUND);
         }
         return result;
     }
 
     private void setTrendValue() {
-        for (DocumentTrendInfo documentTrendInfo : documentTrendInfoList){
+        for (DocumentTrendInfo documentTrendInfo : documentTrendInfoList) {
             documentTrendInfo.calculateTrend();
         }
     }
