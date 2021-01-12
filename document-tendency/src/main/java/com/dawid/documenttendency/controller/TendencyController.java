@@ -36,6 +36,10 @@ public class TendencyController {
         return trendService.getTrendsForPreviousWeek();
     }
 
+    @GetMapping("/trending2")
+    public List<DocumentTrendInfo> getTrendingDocuments2(){
+        return trendService.getTrendsForPreviousWeek2();
+    }
 
 
 }

@@ -14,4 +14,6 @@ public interface TrendService {
 
 
      List<DocumentTrendInfo> getTrendsForPreviousWeek();
+
+    List<DocumentTrendInfo> getTrendsForPreviousWeek2();
 }

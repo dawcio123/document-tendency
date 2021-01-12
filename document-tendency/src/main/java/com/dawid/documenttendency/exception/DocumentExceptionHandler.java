@@ -12,7 +12,8 @@ public class DocumentExceptionHandler {
     @ExceptionHandler(DocumentException.class)
     public ResponseEntity<ErrorInfo> handleException(DocumentException e){
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        if (DocumentError.DOCUMENT_OPEN_INFO_NOT_FOUND.equals(e.getDocumentError())){
+        if (DocumentError.DOCUMENT_OPEN_INFO_NOT_FOUND.equals(e.getDocumentError()) ||
+                DocumentError.NO_DOCUMENTS_WITH_RAPID_TREND_FOUND.equals(e.getDocumentError())){
             httpStatus = HttpStatus.NOT_FOUND;
 
         }
