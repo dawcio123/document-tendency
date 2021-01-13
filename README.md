@@ -11,6 +11,7 @@
   - pull notificiation from RabbitMQ
   - provide API to get most popular documents for last week
   - provide API to get trending documents for last week
+  - provide API to get trending documents for period
 -------------------
 ### Endpoints
 
@@ -29,6 +30,11 @@ http://localhost:9090/api/
 to reduce limits use Query parameter: (Integer) resultLimit
 
 [/tendencies/trending](http://localhost:9090/api//tendencies/trending) -> get json with most trending documents
+
+[/tendencies/trending/period](http://localhost:9090/api/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10) -> get json with most trending documents
+
+to set period use Query parameter: fromDate and to toDate, for example
+http://localhost:9090/api/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10
 
 -------------------
 ### Tests
