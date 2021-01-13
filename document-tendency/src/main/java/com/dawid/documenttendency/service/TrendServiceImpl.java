@@ -6,13 +6,14 @@ import com.dawid.documenttendency.model.DocumentOpenInfo;
 import com.dawid.documenttendency.model.DocumentTrendAggregate;
 import com.dawid.documenttendency.model.DocumentTrendInfo;
 import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
+import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dawid.documenttendency.exception.DocumentError.DOCUMENT_OPEN_INFO_NOT_FOUND;
+import static com.dawid.documenttendency.exception.DocumentError.*;
 
 @Service
 public class TrendServiceImpl implements TrendService {
@@ -35,7 +36,7 @@ public class TrendServiceImpl implements TrendService {
         LocalDate fromDate = getFirstDayOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = getDocumentOpenInfos(fromDate, toDate);
-       
+
 
         Map<String, Long> documentIdToOpeningCount = calculatePopularity(documentsInDateRange);
 
@@ -48,10 +49,38 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-
     public List<DocumentTrendInfo> getTrendsForPreviousWeek() {
-        return getTrends(getFirstDayOfPreviousWeek());
+
+        LocalDate fromDate = getFirstDayOfPreviousWeek();
+        LocalDate toDate = fromDate.plusDays(6);
+
+        return getTrends(fromDate, toDate);
     }
+
+    @Override
+    public List<DocumentTrendInfo> getTrendsForPeriod(String fromDateString, String toDateString) {
+
+        if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)){
+            throw new DocumentException(DATE_HAS_NO_VALID_FORMAT);
+        }
+
+        LocalDate fromDate = LocalDate.parse(fromDateString);
+        LocalDate toDate = LocalDate.parse(toDateString);
+
+        if (toDate.isBefore(fromDate)){
+            throw new DocumentException(DATE_END_IS_BEFORE_DATE_START);
+        }
+
+        return getTrends(fromDate, toDate);
+    }
+
+    private boolean hasDateValidFormat(String date) {
+        String pattern = "yyyy-MM-dd";
+
+        return(GenericValidator.isDate(date,pattern,true));
+    }
+
+
 
 
     private LocalDate getFirstDayOfPreviousWeek() {
@@ -62,12 +91,10 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
+    private List<DocumentTrendInfo> getTrends(LocalDate fromDate, LocalDate toDate) {
 
-    private List<DocumentTrendInfo> getTrends(LocalDate firstDayOfWeek) {
 
 
-        LocalDate fromDate = firstDayOfWeek;
-        LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = getDocumentOpenInfos(fromDate, toDate);
 
         List<DocumentTrendInfo> documentTrends = generateDocumentTrendInfos(documentsInDateRange);
@@ -82,16 +109,13 @@ public class TrendServiceImpl implements TrendService {
 
     private List<DocumentOpenInfo> getDocumentOpenInfos(LocalDate fromDate, LocalDate toDate) {
         List<DocumentOpenInfo> documentOpenInfoFromRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);
-        if (documentOpenInfoFromRange.size() == 0){
+        if (documentOpenInfoFromRange.size() == 0) {
             throw new DocumentException(DOCUMENT_OPEN_INFO_NOT_FOUND);
         }
 
         return documentOpenInfoFromRange;
 
     }
-
-
-
 
 
     private List<DocumentTrendInfo> generateDocumentTrendInfos(List<DocumentOpenInfo> documentsInDateRange) {

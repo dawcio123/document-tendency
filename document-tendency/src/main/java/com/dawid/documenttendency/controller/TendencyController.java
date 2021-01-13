@@ -36,7 +36,11 @@ public class TendencyController {
         return trendService.getTrendsForPreviousWeek();
     }
 
+    @GetMapping("/trending/period")
+    public List<DocumentTrendInfo> getTrendingDocumentsByPeriod(@RequestParam String fromDate, @RequestParam String toDate){
 
+        return trendService.getTrendsForPeriod(fromDate,toDate);
+    }
 
 
 }

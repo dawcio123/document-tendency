@@ -16,4 +16,6 @@ public interface TrendService {
 
 
     List<DocumentTrendInfo> getTrendsForPreviousWeek();
+
+    List<DocumentTrendInfo> getTrendsForPeriod(String fromDate, String toDate);
 }
