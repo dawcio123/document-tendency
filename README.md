@@ -24,11 +24,11 @@ http://localhost:9090/api/
 
 **- document-tendency:**
 
-[/tendencies/popular](http://localhost:9090/api/tendencies/popular) -> receive json with 10 most popular documents for last week
+[/tendencies/popular](http://localhost:9090/api/tendencies/popular) -> get json with 10 most popular documents for last week
 
 to reduce limits use Query parameter: (Integer) resultLimit
 
-[/tendencies/trending](http://localhost:9090/api//tendencies/trending) -> receive json with most trending documents
+[/tendencies/trending](http://localhost:9090/api//tendencies/trending) -> get json with most trending documents
 
 -------------------
 ### Tests
