@@ -35,15 +35,14 @@ public class TrendServiceImpl implements TrendService {
         LocalDate fromDate = getFirstDayOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
         List<DocumentOpenInfo> documentsInDateRange = getDocumentOpenInfos(fromDate, toDate);
-        if (documentsInDateRange.size() == 0) {
-            throw new NoSuchElementException();
-        }
-        Map<String, Long> documentPopularityById = calculatePopularity(documentsInDateRange);
+       
 
-        Map<String, Long> documentPopularityByIdSorted = sortPopularity(documentPopularityById, resultLimit);
+        Map<String, Long> documentIdToOpeningCount = calculatePopularity(documentsInDateRange);
+
+        Map<String, Long> documentIdToOpeningCountSortedAndLimited = sortPopularity(documentIdToOpeningCount, resultLimit);
 
 
-        List<DocumentDto> documentsPopularity = generateDocuments(documentPopularityByIdSorted);
+        List<DocumentDto> documentsPopularity = generateDocuments(documentIdToOpeningCountSortedAndLimited);
 
         return documentsPopularity;
     }
@@ -96,20 +95,20 @@ public class TrendServiceImpl implements TrendService {
 
 
     private List<DocumentTrendInfo> generateDocumentTrendInfos(List<DocumentOpenInfo> documentsInDateRange) {
-        Map<String, DocumentTrendInfo> documentsWithCountedOpenings = new HashMap<>();
+        Map<String, DocumentTrendInfo> documentIdToDocumentTrendInfo = new HashMap<>();
 
         for (DocumentOpenInfo openedDocument : documentsInDateRange) {
             String documentId = openedDocument.getDocumentId();
 
-            if (!documentsWithCountedOpenings.containsKey(documentId)) {
+            if (!documentIdToDocumentTrendInfo.containsKey(documentId)) {
                 DocumentTrendInfo documentTrend = new DocumentTrendInfo(documentId, new TreeMap<LocalDate, Long>());
-                documentsWithCountedOpenings.put(documentId, documentTrend);
+                documentIdToDocumentTrendInfo.put(documentId, documentTrend);
             }
-            DocumentTrendInfo documentTrend = documentsWithCountedOpenings.get(documentId);
+            DocumentTrendInfo documentTrend = documentIdToDocumentTrendInfo.get(documentId);
             documentTrend.addOpenDate(openedDocument.getOpenDate());
 
         }
-        List<DocumentTrendInfo> documentTrends = getDocumentTrendInfoList(documentsWithCountedOpenings);
+        List<DocumentTrendInfo> documentTrends = getDocumentTrendInfoList(documentIdToDocumentTrendInfo);
         return documentTrends;
     }
 
@@ -124,19 +123,19 @@ public class TrendServiceImpl implements TrendService {
 
 
     private Map<String, Long> calculatePopularity(List<DocumentOpenInfo> documentsInDateRange) {
-        Map<String, Long> documentPopularityById = new HashMap<>();
+        Map<String, Long> documentIdToOpeningCount = new HashMap<>();
 
         for (DocumentOpenInfo openedDocument : documentsInDateRange) {
             String documentId = openedDocument.getDocumentId();
 
-            if (!documentPopularityById.containsKey(documentId)) {
-                documentPopularityById.put(documentId, 1L);
+            if (!documentIdToOpeningCount.containsKey(documentId)) {
+                documentIdToOpeningCount.put(documentId, 1L);
             } else {
-                Long currentOpeningCount = documentPopularityById.get(documentId);
-                documentPopularityById.put(documentId, currentOpeningCount + 1);
+                Long currentOpeningCount = documentIdToOpeningCount.get(documentId);
+                documentIdToOpeningCount.put(documentId, currentOpeningCount + 1);
             }
         }
-        return documentPopularityById;
+        return documentIdToOpeningCount;
     }
 
 
@@ -148,9 +147,9 @@ public class TrendServiceImpl implements TrendService {
         return documents;
     }
 
-    public Map<String, Long> sortPopularity(Map<String, Long> popularDocumentById, int limit) {
+    public Map<String, Long> sortPopularity(Map<String, Long> documentIdToOpeningCount, int limit) {
         Map<String, Long> sortedAndLimited =
-                popularDocumentById.entrySet().stream()
+                documentIdToOpeningCount.entrySet().stream()
                         .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                         .limit(limit)
                         .collect(Collectors.toMap(
