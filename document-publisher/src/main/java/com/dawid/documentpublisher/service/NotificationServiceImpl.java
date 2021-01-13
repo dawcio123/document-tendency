@@ -26,7 +26,8 @@ public class NotificationServiceImpl implements NotificationService {
         rabbitTemplate.convertAndSend(DOCUMENT_OPEN, documentOpenNotification);
         documentOpenNotification = createDocOpenNotificationForTrend(document);
         rabbitTemplate.convertAndSend(DOCUMENT_OPEN, documentOpenNotification);
-
+        documentOpenNotification = createDocOpenNotificationForTest(document);
+        rabbitTemplate.convertAndSend(DOCUMENT_OPEN, documentOpenNotification);
     }
 
     private DocumentOpenNotification createDocOpenNotification(Document document) {
@@ -42,6 +43,14 @@ public class NotificationServiceImpl implements NotificationService {
                 .documentId(document.getId())
                 .userId(UUID.randomUUID().toString())
                 .openDate(getFirstDayOfPreviousWeek().plusDays(Long.valueOf(new Random().nextInt(3)+4)))
+                .build();
+    }
+
+    private DocumentOpenNotification createDocOpenNotificationForTest(Document document) {
+        return DocumentOpenNotification.builder()
+                .documentId(document.getId())
+                .userId(UUID.randomUUID().toString())
+                .openDate(LocalDate.of (2020, 12,  new Random().nextInt(30)+1))
                 .build();
     }
 
