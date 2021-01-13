@@ -13,7 +13,7 @@ public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
 
     private String documentId;
     @JsonIgnore
-    private Map<LocalDate, Long> opensAtDate;
+    private Map<LocalDate, Long> dateToOpeningCount;
     private Double trendValue;
     private int OpeningCount;
     @JsonIgnore
@@ -21,15 +21,15 @@ public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
 
     public DocumentTrendInfo(String documentId, Map<LocalDate, Long> opensAtDate) {
         this.documentId = documentId;
-        this.opensAtDate = opensAtDate;
+        this.dateToOpeningCount = opensAtDate;
     }
 
     public void addOpenDate(LocalDate openDate){
-        if (!opensAtDate.containsKey(openDate)){
-            opensAtDate.put(openDate, 1L);
+        if (!dateToOpeningCount.containsKey(openDate)){
+            dateToOpeningCount.put(openDate, 1L);
         } else {
-            Long currentOpeningCount = opensAtDate.get(openDate);
-            opensAtDate.put(openDate, currentOpeningCount +1);
+            Long currentOpeningCount = dateToOpeningCount.get(openDate);
+            dateToOpeningCount.put(openDate, currentOpeningCount +1);
         }
         OpeningCount ++;
 
@@ -37,37 +37,29 @@ public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
 
     public void calculateTrend(){
 
-        Map<Double, Double> dataToCalculateTrend = transformDataToDouble(opensAtDate);
-        addData(dataToCalculateTrend);
+        Map<Double, Double> dateToOpeningCount = createDateToOpeningCount(this.dateToOpeningCount);
+        addData(dateToOpeningCount);
 
         trendValue = r.getSlope();
     }
 
-    private Map<Double, Double> transformDataToDouble(Map<LocalDate, Long> input){
-        Map<Double, Double> transformedToDoubleMap = new HashMap<>();
+    private Map<Double, Double> createDateToOpeningCount(Map<LocalDate, Long> input){
+        Map<Double, Double> dateToOpeningCount = new HashMap<>();
 
         for (Map.Entry<LocalDate, Long> entry : input.entrySet()){
             Double dateAsNumber = Double.valueOf(entry.getKey().toEpochDay());
             Double openingCount = Double.valueOf(entry.getValue());
-            transformedToDoubleMap.put(dateAsNumber, openingCount);
+            dateToOpeningCount.put(dateAsNumber, openingCount);
         }
-        return transformedToDoubleMap;
+        return dateToOpeningCount;
 
     }
-    private void addData(Map<Double, Double> data){
-        for (Map.Entry<Double, Double> entry : data.entrySet()){
+    private void addData(Map<Double, Double> dateToOpeningCount){
+        for (Map.Entry<Double, Double> entry : dateToOpeningCount.entrySet()){
             r.addData(entry.getKey(), entry.getValue());
         }
     }
 
-//    @Override
-//    public int compareTo(DocumentTrend o) {
-//        if (this.trendValue == o.getTrendValue()){
-//            return 0;
-//        } else if (this.trendValue > o.getTrendValue()){
-//            return 1;
-//        } else return 1;
-//    }
 
     @Override
     public int compareTo(DocumentTrendInfo o){
