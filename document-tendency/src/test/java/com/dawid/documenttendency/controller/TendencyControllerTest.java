@@ -144,4 +144,56 @@ class TendencyControllerTest {
 
     }
 
+    @Test
+    @DisplayName("SENIOR - Should return trending document with min set trend")
+    @Sql("/scripts/INIT_DATA_FOR_TENDENCY_LAST_WEEK.sql")
+    void shouldReturnTrendingDocumentForPeriod() throws Exception {
+
+
+        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendInfo[].class);
+        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+
+
+        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
+        assertTrue(resultList.get(0).getTrendValue() >= DocumentTrendAggregate.TREND_MINIMAL_VALUE);
+
+
+    }
+
+    @Test
+    @DisplayName("SENIOR - Should return list with trending documents sorted")
+    @Sql("/scripts/INIT_DATA_FOR_TENDENCIES_FROM_LAST_WEEK.sql")
+    void shouldReturnTrendingDocumentsForPeriod() throws Exception {
+
+
+        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendInfo[].class);
+        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+
+        double trendValue1 = resultList.get(0).getTrendValue();
+        double trendValue2 = resultList.get(1).getTrendValue();
+        double trendValue3 = resultList.get(2).getTrendValue();
+
+        assertEquals(3, resultList.size());
+        assertTrue(trendValue1 > trendValue2);
+        assertTrue(trendValue2 > trendValue3);
+
+
+    }
+
+    @Test
+    @DisplayName("SENIOR - Should return trending document with requested period")
+    @Sql("/scripts/INIT_DATA_FOR_TENDENCY_DEFINED_PERIOD.sql")
+    void shouldReturnTrendingDocumentForRequestedPeriod() throws Exception {
+
+
+        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2020-12-20&toDate=2021-01-10", DocumentTrendInfo[].class);
+        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+
+
+        assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
+
+
+
+    }
+
 }
