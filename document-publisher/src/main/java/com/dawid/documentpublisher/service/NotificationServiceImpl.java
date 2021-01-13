@@ -16,6 +16,7 @@ public class NotificationServiceImpl implements NotificationService {
     public static final String DOCUMENT_OPEN = "document_open";
     private RabbitTemplate rabbitTemplate;
 
+
     public NotificationServiceImpl(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
@@ -23,13 +24,35 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendOpenDocumentNotification(Document document) {
         DocumentOpenNotification documentOpenNotification = createDocOpenNotification(document);
         rabbitTemplate.convertAndSend(DOCUMENT_OPEN, documentOpenNotification);
+        documentOpenNotification = createDocOpenNotificationForTrend(document);
+        rabbitTemplate.convertAndSend(DOCUMENT_OPEN, documentOpenNotification);
+
     }
 
     private DocumentOpenNotification createDocOpenNotification(Document document) {
         return DocumentOpenNotification.builder()
                 .documentId(document.getId())
                 .userId(UUID.randomUUID().toString())
-                .openDate(LocalDate.of(2021, 1,new Random().nextInt(30) + 1))
+                .openDate(getFirstDayOfPreviousWeek().plusDays(Long.valueOf(new Random().nextInt(7))))
                 .build();
     }
+
+    private DocumentOpenNotification createDocOpenNotificationForTrend(Document document) {
+        return DocumentOpenNotification.builder()
+                .documentId(document.getId())
+                .userId(UUID.randomUUID().toString())
+                .openDate(getFirstDayOfPreviousWeek().plusDays(Long.valueOf(new Random().nextInt(3)+4)))
+                .build();
+    }
+
+
+
+
+    private LocalDate getFirstDayOfPreviousWeek() {
+        int dayOfWeek = LocalDate.now().getDayOfWeek().getValue();
+        LocalDate BegOfThisWeek = LocalDate.now().minusDays(dayOfWeek - 1);
+        LocalDate fromDate = BegOfThisWeek.minusWeeks(1);
+        return fromDate;
+    }
+
 }
