@@ -3,6 +3,7 @@ package com.dawid.documenttendency.model.document;
 import com.dawid.documenttendency.exception.DocumentError;
 import com.dawid.documenttendency.exception.DocumentException;
 import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
+import com.dawid.documenttendency.util.Properties;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,12 +14,10 @@ public class DocumentRepository {
     private List<String> documentsIds;
     private List<Document> documents = new ArrayList<>();
     private int openingsSum;
-    private final double OPENING_PERCENTILE = 5.0;
-    public static final double TREND_MINIMAL_VALUE = 1.0;
 
-    public int getOpeningsSum() {
-        return openingsSum;
-    }
+
+
+
 
     public DocumentRepository(List<String> documentsIds) {
         this.documentsIds = documentsIds;
@@ -70,7 +69,7 @@ public class DocumentRepository {
         List<Document> result = new ArrayList<>();
 
         for (Document document : documents) {
-            if (document.getTrendValue() >= TREND_MINIMAL_VALUE) {
+            if (document.getTrendValue() >= Properties.TREND_MINIMAL_VALUE) {
                 result.add(document);
             }
         }
@@ -115,20 +114,23 @@ public class DocumentRepository {
     }
 
     private int calculatePercentileIndex(List<Document> documents) {
-        return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documents.size());
+        return (int) Math.ceil(Properties.OPENING_PERCENTILE / 100.0 * documents.size());
 
     }
 
 
     private List<Document> cutPercintile(List<Document> documentList, int percintileIndex) {
 
+        if (documentList.size() == 1){
+            return documentList;
+        }
 
         List<Document> result = new ArrayList<>();
 
         Collections.sort(documentList, new DocumentComparatorByOpeningCount());
         int percintileValue = documentList.get(percintileIndex-1).getOpeningCount();
         for (int i = 0; i < documentList.size(); i++) {
-            if (documentList.get(i).getOpeningCount() >= percintileValue){
+            if (documentList.get(i).getOpeningCount() > percintileValue){
                 result.add(documentList.get(i));
             }
 
