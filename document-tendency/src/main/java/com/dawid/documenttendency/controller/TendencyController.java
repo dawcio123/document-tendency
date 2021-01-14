@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 
@@ -32,7 +32,7 @@ public class TendencyController {
     }
 
     @GetMapping("/popular/period")
-    public List<DocumentPopularDto> getPopularDocumentsByPeriod(@RequestParam String fromDate, @RequestParam String toDate){
+    public List<DocumentPopularDto> getPopularDocumentsByPeriod(@RequestParam @NotBlank String fromDate, @RequestParam @NotBlank String toDate){
         return documentService.getPopularForPeriod(inputParser.parseDate(fromDate),inputParser.parseDate(toDate));
     }
 
@@ -43,7 +43,7 @@ public class TendencyController {
     }
 
     @GetMapping("/trending/period")
-    public List<DocumentTrendDto> getTrendingDocumentsByPeriod(@RequestParam @NotEmpty String fromDate, @RequestParam @NotEmpty String toDate){
+    public List<DocumentTrendDto> getTrendingDocumentsByPeriod(@RequestParam @NotBlank String fromDate, @RequestParam @NotBlank String toDate){
         return documentService.getTrendsForPeriod(inputParser.parseDate(fromDate),inputParser.parseDate(toDate));
     }
 

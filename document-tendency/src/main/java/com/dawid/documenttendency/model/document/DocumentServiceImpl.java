@@ -3,10 +3,12 @@ package com.dawid.documenttendency.model.document;
 import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
 import com.dawid.documenttendency.model.openNotification.DocumentOpenInfoService;
 import com.dawid.documenttendency.util.DateService;
+import com.dawid.documenttendency.util.Properties;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -34,7 +36,9 @@ public class DocumentServiceImpl implements DocumentService {
 
         dateService.validatePeriod(fromDate, toDate);
         List<Document> documents = getDocuments(fromDate, toDate);
-        return getDocumentPopularDtos(documents);
+        return getDocumentPopularDtos(documents).stream()
+                .limit(Properties.RESULTS_LIMIT)
+                .collect(Collectors.toList());
     }
 
     public List<DocumentTrendDto> getTrendsForPreviousWeek() {
@@ -44,12 +48,15 @@ public class DocumentServiceImpl implements DocumentService {
         return getTrendsForPeriod(fromDate, toDate);
     }
 
+
     public List<DocumentTrendDto> getTrendsForPeriod(LocalDate fromDate, LocalDate toDate) {
 
 
         dateService.validatePeriod(fromDate, toDate);
         List<Document> documents = getDocuments(fromDate, toDate);
-        return getDocumentTrendDtos(documents);
+        return getDocumentTrendDtos(documents).stream()
+                .limit(Properties.RESULTS_LIMIT)
+                .collect(Collectors.toList());
     }
 
 
