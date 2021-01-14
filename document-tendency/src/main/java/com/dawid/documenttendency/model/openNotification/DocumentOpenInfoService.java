@@ -1,7 +1,7 @@
-package com.dawid.documenttendency.service;
+package com.dawid.documenttendency.model.openNotification;
 
-import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentOpenNotification;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenNotification;
 
 import java.time.LocalDate;
 import java.util.List;

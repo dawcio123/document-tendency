@@ -1,7 +1,6 @@
-package com.dawid.documenttendency.service;
+package com.dawid.documenttendency.model.document;
 
-import com.dawid.documenttendency.model.DocumentDto;
-import com.dawid.documenttendency.model.Document;
+import com.dawid.documenttendency.model.document.Document;
 
 import java.util.List;
 

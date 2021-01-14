@@ -1,8 +1,7 @@
 package com.dawid.documenttendency.controller;
 
-import com.dawid.documenttendency.model.DocumentDto;
-import com.dawid.documenttendency.model.Document;
-import com.dawid.documenttendency.service.TrendService;
+import com.dawid.documenttendency.model.document.Document;
+import com.dawid.documenttendency.model.document.TrendService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

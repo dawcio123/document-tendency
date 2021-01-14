@@ -1,14 +1,15 @@
-package com.dawid.documenttendency.model;
+package com.dawid.documenttendency.model.document;
 
 import com.dawid.documenttendency.exception.DocumentError;
 import com.dawid.documenttendency.exception.DocumentException;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
-public class DocumentTrendAggregate {
+public class DocumentRepository {
     private List<String> documentsIds;
     private List<Document> documents = new ArrayList<>();
     private int openingsSum;
@@ -19,7 +20,7 @@ public class DocumentTrendAggregate {
         return openingsSum;
     }
 
-    public DocumentTrendAggregate(List<String> documentsIds) {
+    public DocumentRepository(List<String> documentsIds) {
         this.documentsIds = documentsIds;
         this.documents = generateDocuments(documentsIds);
     }
@@ -74,7 +75,7 @@ public class DocumentTrendAggregate {
         this.openingsSum = calculateOpeningsSum(documents);
         List<Document> documentsWithOpeningAboveSetPercentile = removeDocumnetsBelowSetPercintile(documents);
 
-        documentsWithOpeningAboveSetPercentile.sort(new DocumentOpeningComparatorByOpeningCount().reversed());
+        documentsWithOpeningAboveSetPercentile.sort(new DocumentComparatorByOpeningCount().reversed());
         //  Collections.sort(documents, new DocumentOpeningComparatorByOpeningCount());
         return documentsWithOpeningAboveSetPercentile;
 
@@ -103,7 +104,6 @@ public class DocumentTrendAggregate {
     }
 
     private int calculatePercentileIndex(List<Document> documents) {
-
         return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documents.size());
 
     }
@@ -112,17 +112,10 @@ public class DocumentTrendAggregate {
     private List<Document> cutPercintile(List<Document> documentList, int percintileIndex) {
         List<Document> result = new ArrayList<>();
 
-        Collections.sort(documentList, new DocumentOpeningComparatorByOpeningCount());
-
-
+        Collections.sort(documentList, new DocumentComparatorByOpeningCount());
         for (int i = percintileIndex; i < documentList.size(); i++) {
-
-
             result.add(documentList.get(i));
-
-
         }
-
         return result;
     }
 

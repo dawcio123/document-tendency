@@ -1,4 +1,4 @@
-package com.dawid.documenttendency.model;
+package com.dawid.documenttendency.model.openNotification;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

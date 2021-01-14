@@ -1,6 +1,7 @@
-package com.dawid.documenttendency.service;
+package com.dawid.documenttendency.model.openNotification;
 
-import com.dawid.documenttendency.model.DocumentOpenNotification;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfoService;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenNotification;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;

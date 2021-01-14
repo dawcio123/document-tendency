@@ -1,4 +1,4 @@
-package com.dawid.documenttendency.model;
+package com.dawid.documenttendency.model.document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

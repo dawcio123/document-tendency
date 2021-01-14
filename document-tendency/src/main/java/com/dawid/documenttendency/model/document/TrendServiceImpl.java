@@ -1,17 +1,14 @@
-package com.dawid.documenttendency.service;
+package com.dawid.documenttendency.model.document;
 
 import com.dawid.documenttendency.exception.DocumentException;
-import com.dawid.documenttendency.model.DocumentDto;
-import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentTrendAggregate;
-import com.dawid.documenttendency.model.Document;
-import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfoService;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfoRepository;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.dawid.documenttendency.exception.DocumentError.*;
 
@@ -97,12 +94,12 @@ public class TrendServiceImpl implements TrendService {
     private List<Document> getTrends(LocalDate fromDate, LocalDate toDate) {
 
         List<String> documentsIds = documentOpenInfoService.getDocumentsIds(fromDate, toDate );
-        DocumentTrendAggregate documentTrendAggregate = new DocumentTrendAggregate(documentsIds);
+        DocumentRepository documentRepository = new DocumentRepository(documentsIds);
 
         List<DocumentOpenInfo> documentOpenInfos = getDocumentOpenInfos(fromDate, toDate);
-        documentTrendAggregate.addOpeningToDocuments(documentOpenInfos);
+        documentRepository.addOpeningToDocuments(documentOpenInfos);
 
-        return documentTrendAggregate.getListWithTrends();
+        return documentRepository.getListWithTrends();
 
 
     }
@@ -110,12 +107,12 @@ public class TrendServiceImpl implements TrendService {
     private List<Document> getPopulars(LocalDate fromDate, LocalDate toDate) {
 
         List<String> documentsIds = documentOpenInfoService.getDocumentsIds(fromDate, toDate );
-        DocumentTrendAggregate documentTrendAggregate = new DocumentTrendAggregate(documentsIds);
+        DocumentRepository documentRepository = new DocumentRepository(documentsIds);
 
         List<DocumentOpenInfo> documentOpenInfos = getDocumentOpenInfos(fromDate, toDate);
-        documentTrendAggregate.addOpeningToDocuments(documentOpenInfos);
+        documentRepository.addOpeningToDocuments(documentOpenInfos);
 
-        return documentTrendAggregate.getListWithPopular();
+        return documentRepository.getListWithPopular();
 
 
     }

@@ -1,11 +1,8 @@
-package com.dawid.documenttendency.service;
+package com.dawid.documenttendency.model.openNotification;
 
 
 
 import com.dawid.documenttendency.exception.DocumentException;
-import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentOpenNotification;
-import com.dawid.documenttendency.repository.DocumentOpenInfoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
