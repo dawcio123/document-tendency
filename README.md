@@ -18,7 +18,7 @@
 -------------------
 ### Endpoints
 
-**- api endpoint:**
+**- general endpoint:**
 http://localhost:9090/api/
 
 **- document-publisher:**
@@ -36,7 +36,7 @@ http://localhost:9090/api/
 
 [/tendencies/trending/period](http://localhost:9090/api/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10) -> get json with most trending documents for queried dates, sorted descending
 
-to set period use Query parameters: fromDate and toDate, value in format: yyyy-MM-dd
+to set period use Query parameters: `fromDate` and `toDate`, value in format: `yyyy-MM-dd`
 
 
 -------------------
