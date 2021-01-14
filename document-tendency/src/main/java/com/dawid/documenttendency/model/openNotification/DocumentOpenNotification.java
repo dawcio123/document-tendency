@@ -1,4 +1,4 @@
-package com.dawid.documenttendency.model;
+package com.dawid.documenttendency.model.openNotification;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

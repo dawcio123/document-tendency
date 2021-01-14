@@ -1,7 +1,4 @@
-package com.dawid.documenttendency.service;
-
-import com.dawid.documenttendency.model.DocumentOpenInfo;
-import com.dawid.documenttendency.model.DocumentOpenNotification;
+package com.dawid.documenttendency.model.openNotification;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,4 +11,6 @@ public interface DocumentOpenInfoService {
 
 
     List<DocumentOpenInfo> getDocumentOpenInfoFromRange(LocalDate from, LocalDate toDate);
+
+    List<String> getDocumentsIds(LocalDate fromDate, LocalDate toDate);
 }

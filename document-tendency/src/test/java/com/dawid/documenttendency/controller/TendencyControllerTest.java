@@ -1,9 +1,8 @@
 package com.dawid.documenttendency.controller;
 
 
-import com.dawid.documenttendency.model.DocumentDto;
-import com.dawid.documenttendency.model.DocumentTrendAggregate;
-import com.dawid.documenttendency.model.DocumentTrendInfo;
+import com.dawid.documenttendency.model.document.*;
+import com.dawid.documenttendency.util.Properties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -51,17 +50,18 @@ class TendencyControllerTest {
     public TestRestTemplate testRestTemplate;
 
 
+
     @Test
-    @DisplayName("JUNIOR - Should count document opening only from last week")
-    @Sql("/scripts/INIT_DATA_FOR_FEW_WEEKS.sql")
-    void shouldCountDocumentOpenedOnlyForLastWeek() throws Exception {
+    @DisplayName("JUNIOR - Should return popular document even is only one in db")
+    @Sql("/scripts/INIT_DATA_ONLY_ONE_DOCUMENT.sql")
+    void shouldReturnPopularDocumentIfIsOnlyOneInDb() throws Exception {
 
 
-        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
-        List<DocumentDto> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentPopularDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentPopularDto[].class);
+        List<DocumentPopularDto> resultList = Arrays.asList(result.getBody());
 
         assertEquals(1, resultList.size());
-        assertEquals(7, resultList.get(0).getOpenCount());
+        assertEquals(7, resultList.get(0).getOpeningCount());
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
 
 
@@ -74,8 +74,8 @@ class TendencyControllerTest {
     void shouldGetMostPopularDocumentFromLastWeek() throws Exception {
 
 
-        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
-        List<DocumentDto> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentPopularDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentPopularDto[].class);
+        List<DocumentPopularDto> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
@@ -90,20 +90,20 @@ class TendencyControllerTest {
     void shouldReturnPopularDescending() throws Exception {
 
 
-        ResponseEntity<DocumentDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentDto[].class);
-        List<DocumentDto> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentPopularDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentPopularDto[].class);
+        List<DocumentPopularDto> resultList = Arrays.asList(result.getBody());
 
 
-        assertEquals(14, resultList.get(0).getOpenCount());
-        assertNotEquals(13, resultList.get(0).getOpenCount());
+        assertEquals(14, resultList.get(0).getOpeningCount());
+        assertNotEquals(13, resultList.get(0).getOpeningCount());
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
 
-        assertEquals(7, resultList.get(1).getOpenCount());
-        assertNotEquals(6, resultList.get(1).getOpenCount());
+        assertEquals(7, resultList.get(1).getOpeningCount());
+        assertNotEquals(6, resultList.get(1).getOpeningCount());
         assertEquals("Xb39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(1).getDocumentId());
 
-        assertEquals(4, resultList.get(2).getOpenCount());
-        assertNotEquals(3, resultList.get(2).getOpenCount());
+        assertEquals(4, resultList.get(2).getOpeningCount());
+        assertNotEquals(3, resultList.get(2).getOpeningCount());
         assertEquals("Yb39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(2).getDocumentId());
 
     }
@@ -114,12 +114,12 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocument() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendDto[].class);
+        List<DocumentTrendDto> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
-        assertTrue(resultList.get(0).getTrendValue() >= DocumentTrendAggregate.TREND_MINIMAL_VALUE);
+        assertTrue(resultList.get(0).getTrendValue() >= Properties.TREND_MINIMAL_VALUE);
 
 
     }
@@ -130,8 +130,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocuments() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendDto[].class);
+        List<DocumentTrendDto> resultList = Arrays.asList(result.getBody());
 
         double trendValue1 = resultList.get(0).getTrendValue();
         double trendValue2 = resultList.get(1).getTrendValue();
@@ -150,12 +150,12 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentForPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendDto[].class);
+        List<DocumentTrendDto> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
-        assertTrue(resultList.get(0).getTrendValue() >= DocumentTrendAggregate.TREND_MINIMAL_VALUE);
+        assertTrue(resultList.get(0).getTrendValue() >= DocumentServiceImpl.TREND_MINIMAL_VALUE);
 
 
     }
@@ -166,8 +166,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentsForPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendDto[].class);
+        List<DocumentTrendDto> resultList = Arrays.asList(result.getBody());
 
         double trendValue1 = resultList.get(0).getTrendValue();
         double trendValue2 = resultList.get(1).getTrendValue();
@@ -186,8 +186,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentForRequestedPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2020-12-20&toDate=2021-01-10", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2020-12-20&toDate=2021-01-10", DocumentTrendDto[].class);
+        List<DocumentTrendDto> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());

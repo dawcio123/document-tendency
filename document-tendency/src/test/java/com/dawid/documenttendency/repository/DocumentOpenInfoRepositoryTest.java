@@ -1,6 +1,7 @@
 package com.dawid.documenttendency.repository;
 
-import com.dawid.documenttendency.model.DocumentOpenInfo;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
+import com.dawid.documenttendency.model.openNotification.DocumentOpenInfoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
