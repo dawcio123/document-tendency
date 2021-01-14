@@ -121,11 +121,17 @@ public class DocumentRepository {
 
 
     private List<Document> cutPercintile(List<Document> documentList, int percintileIndex) {
+
+
         List<Document> result = new ArrayList<>();
 
         Collections.sort(documentList, new DocumentComparatorByOpeningCount());
-        for (int i = percintileIndex; i < documentList.size(); i++) {
-            result.add(documentList.get(i));
+        int percintileValue = documentList.get(percintileIndex-1).getOpeningCount();
+        for (int i = 0; i < documentList.size(); i++) {
+            if (documentList.get(i).getOpeningCount() >= percintileValue){
+                result.add(documentList.get(i));
+            }
+
         }
         return result;
     }
