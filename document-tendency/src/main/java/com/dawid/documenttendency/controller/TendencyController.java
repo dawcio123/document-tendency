@@ -32,14 +32,14 @@ public class TendencyController {
 
 
     @GetMapping("/trending")
-    public List<Document> getTrendingDocuments(){
+    public List<DocumentTrendDto> getTrendingDocuments(){
         return trendService.getTrendsForPreviousWeek();
     }
 
     @GetMapping("/trending/period")
     public List<DocumentTrendDto> getTrendingDocumentsByPeriod(@RequestParam String fromDate, @RequestParam String toDate){
 
-        return trendService.getTrendsForPeriod2(fromDate,toDate);
+        return trendService.getTrendsForPeriod(fromDate,toDate);
     }
 
 

@@ -29,68 +29,55 @@ public class TrendServiceImpl implements TrendService {
 
 
 
-    public List<Document> getTrendsForPreviousWeek() {
+    public List<DocumentTrendDto> getTrendsForPreviousWeek() {
 
         LocalDate fromDate = getFirstDayOfPreviousWeek();
         LocalDate toDate = fromDate.plusDays(6);
 
-        return getTrends(fromDate, toDate);
+        List<Document> documents =  getDocuments(fromDate, toDate);
+        return getDocumentTrendDtos(documents);
     }
+
+    public List<DocumentTrendDto> getTrendsForPeriod(String fromDateString, String toDateString) {
+
+        hasInputRightFormat(fromDateString, toDateString);
+
+        LocalDate fromDate = LocalDate.parse(fromDateString);
+        LocalDate toDate = LocalDate.parse(toDateString);
+
+        isPeriodValid(fromDate, toDate);
+        List<Document> documents =  getDocuments(fromDate, toDate);
+        return getDocumentTrendDtos(documents);
+    }
+
 
 
     public List<DocumentPopularDto> getPopularForPeriod(String fromDateString, String toDateString) {
 
-        //validate input
-        if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)){
-            throw new DocumentException(DATE_HAS_NO_VALID_FORMAT);
-        }
 
-        //parse
+        hasInputRightFormat(fromDateString, toDateString);
+
         LocalDate fromDate = LocalDate.parse(fromDateString);
         LocalDate toDate = LocalDate.parse(toDateString);
 
-        //validate
-        if (toDate.isBefore(fromDate)){
-            throw new DocumentException(DATE_END_IS_BEFORE_DATE_START);
-        }
+
+        isPeriodValid(fromDate, toDate);
 
         List<Document> documents =  getDocuments(fromDate, toDate);
-        return getPopular(documents);
+        return getDocumentPopularDtos(documents);
     }
 
-
-    public List<Document> getTrendsForPeriod(String fromDateString, String toDateString) {
-
-        if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)){
+    private void hasInputRightFormat(String fromDateString, String toDateString) {
+        if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)) {
             throw new DocumentException(DATE_HAS_NO_VALID_FORMAT);
         }
+    }
 
-        LocalDate fromDate = LocalDate.parse(fromDateString);
-        LocalDate toDate = LocalDate.parse(toDateString);
-
+    private void isPeriodValid(LocalDate fromDate, LocalDate toDate) {
         if (toDate.isBefore(fromDate)){
             throw new DocumentException(DATE_END_IS_BEFORE_DATE_START);
         }
-
-        return getTrends(fromDate, toDate);
     }
-
-    public List<DocumentTrendDto> getTrendsForPeriod2(String fromDateString, String toDateString) {
-
-        if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)){
-            throw new DocumentException(DATE_HAS_NO_VALID_FORMAT);
-        }
-
-        LocalDate fromDate = LocalDate.parse(fromDateString);
-        LocalDate toDate = LocalDate.parse(toDateString);
-
-        if (toDate.isBefore(fromDate)){
-            throw new DocumentException(DATE_END_IS_BEFORE_DATE_START);
-        }
-        List<Document> documents =  getDocumentsForPopular(fromDate, toDate);
-        return getTrends2(documents);
-    }
-
 
     private boolean hasDateValidFormat(String date) {
         String pattern = "yyyy-MM-dd";
@@ -109,20 +96,9 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    private List<Document> getTrends(LocalDate fromDate, LocalDate toDate) {
-
-        List<String> documentsIds = documentOpenInfoService.getDocumentsIds(fromDate, toDate );
-        DocumentRepository documentRepository = new DocumentRepository(documentsIds);
-
-        List<DocumentOpenInfo> documentOpenInfos = getDocumentOpenInfos(fromDate, toDate);
-        documentRepository.addOpeningToDocuments(documentOpenInfos);
-
-        return documentRepository.getListWithTrends();
 
 
-    }
-
-    private List<DocumentPopularDto> getPopular(List<Document> documents){
+    private List<DocumentPopularDto> getDocumentPopularDtos(List<Document> documents){
         List<DocumentPopularDto> result = new ArrayList<>();
 
         documents.sort(new DocumentComparatorByOpeningCount().reversed());
@@ -133,7 +109,7 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    private List<DocumentTrendDto> getTrends2(List<Document> documents){
+    private List<DocumentTrendDto> getDocumentTrendDtos(List<Document> documents){
         List<DocumentTrendDto> result = new ArrayList<>();
 
 
@@ -168,18 +144,7 @@ public class TrendServiceImpl implements TrendService {
 
     }
 
-    private List<Document> getDocumentsForPopular(LocalDate fromDate, LocalDate toDate) {
 
-        List<String> documentsIds = documentOpenInfoService.getDocumentsIds(fromDate, toDate );
-        DocumentRepository documentRepository = new DocumentRepository(documentsIds);
-
-        List<DocumentOpenInfo> documentOpenInfos = getDocumentOpenInfos(fromDate, toDate);
-        documentRepository.addOpeningToDocuments(documentOpenInfos);
-
-        return documentRepository.getDocuments();
-
-
-    }
 
     private List<DocumentOpenInfo> getDocumentOpenInfos(LocalDate fromDate, LocalDate toDate) {
         List<DocumentOpenInfo> documentOpenInfoFromRange = documentOpenInfoService.getDocumentOpenInfoFromRange(fromDate, toDate);

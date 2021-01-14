@@ -7,11 +7,11 @@ import java.util.List;
 public interface TrendService {
 
 
-    List<Document> getTrendsForPreviousWeek();
+    List<DocumentTrendDto> getTrendsForPreviousWeek();
 
-    List<Document> getTrendsForPeriod(String fromDate, String toDate);
+
 
     List<DocumentPopularDto> getPopularForPeriod(String fromDate, String toDate);
 
-    List<DocumentTrendDto> getTrendsForPeriod2(String fromDateString, String toDateString);
+    List<DocumentTrendDto> getTrendsForPeriod(String fromDateString, String toDateString);
 }
