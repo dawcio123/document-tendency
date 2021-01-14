@@ -1,10 +1,8 @@
 package com.dawid.documenttendency.controller;
 
 
-import com.dawid.documenttendency.model.document.DocumentPopularDto;
-import com.dawid.documenttendency.model.document.DocumentRepository;
-import com.dawid.documenttendency.model.document.Document;
-import com.dawid.documenttendency.model.document.DocumentTrendDto;
+import com.dawid.documenttendency.model.document.*;
+import com.dawid.documenttendency.util.Properties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -52,10 +50,11 @@ class TendencyControllerTest {
     public TestRestTemplate testRestTemplate;
 
 
+
     @Test
-    @DisplayName("JUNIOR - Should count document opening only from last week")
-    @Sql("/scripts/INIT_DATA_FOR_FEW_WEEKS.sql")
-    void shouldCountDocumentOpenedOnlyForLastWeek() throws Exception {
+    @DisplayName("JUNIOR - Should return popular document even is only one in db")
+    @Sql("/scripts/INIT_DATA_ONLY_ONE_DOCUMENT.sql")
+    void shouldReturnPopularDocumentIfIsOnlyOneInDb() throws Exception {
 
 
         ResponseEntity<DocumentPopularDto[]> result = testRestTemplate.getForEntity("/tendencies/popular", DocumentPopularDto[].class);
@@ -120,7 +119,7 @@ class TendencyControllerTest {
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
-        assertTrue(resultList.get(0).getTrendValue() >= DocumentRepository.TREND_MINIMAL_VALUE);
+        assertTrue(resultList.get(0).getTrendValue() >= Properties.TREND_MINIMAL_VALUE);
 
 
     }
@@ -156,7 +155,7 @@ class TendencyControllerTest {
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
-        assertTrue(resultList.get(0).getTrendValue() >= DocumentRepository.TREND_MINIMAL_VALUE);
+        assertTrue(resultList.get(0).getTrendValue() >= DocumentServiceImpl.TREND_MINIMAL_VALUE);
 
 
     }
