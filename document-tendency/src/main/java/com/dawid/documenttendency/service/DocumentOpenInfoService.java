@@ -14,4 +14,6 @@ public interface DocumentOpenInfoService {
 
 
     List<DocumentOpenInfo> getDocumentOpenInfoFromRange(LocalDate from, LocalDate toDate);
+
+    List<String> getDocumentsIds(LocalDate fromDate, LocalDate toDate);
 }

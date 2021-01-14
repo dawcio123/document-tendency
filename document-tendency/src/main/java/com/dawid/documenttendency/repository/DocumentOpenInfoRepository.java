@@ -1,6 +1,7 @@
 package com.dawid.documenttendency.repository;
 
 import com.dawid.documenttendency.model.DocumentOpenInfo;
+import org.hibernate.criterion.Distinct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +12,6 @@ import java.util.List;
 public interface DocumentOpenInfoRepository extends JpaRepository<DocumentOpenInfo, Long> {
 
     List<DocumentOpenInfo> findAllByOpenDateIsBetween(LocalDate start, LocalDate end);
+   // List<String> findDistinctByDocumentIdAndOpenDateIsBetween(LocalDate start, LocalDate end);
+
 }

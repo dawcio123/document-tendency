@@ -3,7 +3,7 @@ package com.dawid.documenttendency.controller;
 
 import com.dawid.documenttendency.model.DocumentDto;
 import com.dawid.documenttendency.model.DocumentTrendAggregate;
-import com.dawid.documenttendency.model.DocumentTrendInfo;
+import com.dawid.documenttendency.model.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -114,8 +114,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocument() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<Document[]> result = testRestTemplate.getForEntity("/tendencies/trending", Document[].class);
+        List<Document> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
@@ -130,8 +130,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocuments() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<Document[]> result = testRestTemplate.getForEntity("/tendencies/trending", Document[].class);
+        List<Document> resultList = Arrays.asList(result.getBody());
 
         double trendValue1 = resultList.get(0).getTrendValue();
         double trendValue2 = resultList.get(1).getTrendValue();
@@ -150,8 +150,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentForPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<Document[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", Document[].class);
+        List<Document> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());
@@ -166,8 +166,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentsForPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<Document[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", Document[].class);
+        List<Document> resultList = Arrays.asList(result.getBody());
 
         double trendValue1 = resultList.get(0).getTrendValue();
         double trendValue2 = resultList.get(1).getTrendValue();
@@ -186,8 +186,8 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentForRequestedPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendInfo[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2020-12-20&toDate=2021-01-10", DocumentTrendInfo[].class);
-        List<DocumentTrendInfo> resultList = Arrays.asList(result.getBody());
+        ResponseEntity<Document[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2020-12-20&toDate=2021-01-10", Document[].class);
+        List<Document> resultList = Arrays.asList(result.getBody());
 
 
         assertEquals("b39280b4-5eed-4bf1-9555-62b5f4e18489", resultList.get(0).getDocumentId());

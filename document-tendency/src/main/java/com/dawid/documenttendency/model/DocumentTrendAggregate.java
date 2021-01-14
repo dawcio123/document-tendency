@@ -9,60 +9,98 @@ import java.util.List;
 
 
 public class DocumentTrendAggregate {
-
-    private List<DocumentTrendInfo> documentTrendInfoList;
+    private List<String> documentsIds;
+    private List<Document> documents = new ArrayList<>();
     private int openingsSum;
-
+    private final double OPENING_PERCENTILE = 5.0;
+    public static final double TREND_MINIMAL_VALUE = 1.0;
 
     public int getOpeningsSum() {
         return openingsSum;
     }
 
-    private final double OPENING_PERCENTILE = 5.0;
-    public static final double TREND_MINIMAL_VALUE = 1.0;
-
-
-    public void setDocumentTrendInfoList(List<DocumentTrendInfo> documentTrendInfoList) {
-        this.documentTrendInfoList = documentTrendInfoList;
+    public DocumentTrendAggregate(List<String> documentsIds) {
+        this.documentsIds = documentsIds;
+        this.documents = generateDocuments(documentsIds);
     }
 
-    private int calculatePercentileIndex() {
-        Collections.sort(documentTrendInfoList);
-        return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documentTrendInfoList.size());
+    private List<Document> generateDocuments(List<String> documentsIds) {
+        List<Document> documents = new ArrayList<>();
+        for (String documentId : documentsIds) {
+            documents.add(new Document(documentId));
+        }
+        return documents;
+    }
+
+    public void addOpeningToDocuments(List<DocumentOpenInfo> documentOpenInfos) {
+        //One list can be transformed to map if optimization needed
+
+        for (DocumentOpenInfo documentOpenInfo : documentOpenInfos) {
+            for (Document document : this.documents) {
+                if (documentOpenInfo.getDocumentId().equals(document.getDocumentId())) {
+                    document.addOpenDate(documentOpenInfo.getOpenDate());
+                }
+            }
+        }
+    }
+
+    public List<Document> getListWithTrends() {
+        this.openingsSum = calculateOpeningsSum(documents);
+        setTrendValueToEachDocument();
+        List<Document> documentsWithOpeningAboveSetPercentile = getDocumentsWithOpeningAboveSetPercentile(documents);
+        Collections.sort(documentsWithOpeningAboveSetPercentile, Collections.reverseOrder());
+        return documentsWithOpeningAboveSetPercentile;
 
     }
 
-    public List<DocumentTrendInfo> getListWithTrends() {
-        this.openingsSum = calculateOpeningsSum(documentTrendInfoList);
-        setTrendValue();
-        int percintileIndex = calculatePercentileIndex();
-        List<DocumentTrendInfo> documentTrendInfoListLimited = cutPercintile(this.documentTrendInfoList, percintileIndex);
-        Collections.sort(documentTrendInfoListLimited, Collections.reverseOrder());
-        return documentTrendInfoListLimited;
+    public List<Document> getListWithPopular() {
+        this.openingsSum = calculateOpeningsSum(documents);
+documents.sort(new DocumentOpeningComparatorByOpeningCount().reversed());
+      //  Collections.sort(documents, new DocumentOpeningComparatorByOpeningCount());
+        return documents;
 
     }
 
+    private List<Document> getDocumentsWithOpeningAboveSetPercentile(List<Document> documents){
+        int percentileIndex = calculatePercentileIndex(documents);
+        return cutPercintile(documents, percentileIndex);
+    }
 
-    int calculateOpeningsSum(List<DocumentTrendInfo> documentTrendInfoList) {
-        int openingsSum = 0;
-        for (DocumentTrendInfo documentTrendInfo : documentTrendInfoList) {
-            openingsSum += documentTrendInfo.getOpeningCount();
+
+
+    private int calculateOpeningsSum(List<Document> documents) {
+        int openingsSum;
+        openingsSum = 0;
+
+        for (Document document : documents) {
+            openingsSum += document.getOpeningCount();
         }
         return openingsSum;
     }
 
+    private void setTrendValueToEachDocument() {
+        for (Document document : documents) {
+            document.calculateTrend();
+        }
+    }
+
+    private int calculatePercentileIndex(List<Document> documents) {
+        Collections.sort(documents);
+        return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documents.size());
+
+    }
 
 
-    private List<DocumentTrendInfo> cutPercintile(List<DocumentTrendInfo> documentTrendInfoList, int percintileIndex) {
-        List<DocumentTrendInfo> result = new ArrayList<>();
+    private List<Document> cutPercintile(List<Document> documentList, int percintileIndex) {
+        List<Document> result = new ArrayList<>();
 
-        Collections.sort(documentTrendInfoList, new OpeningComparator());
+        Collections.sort(documentList, new DocumentOpeningComparatorByOpeningCount());
 
 
-        for (int i = percintileIndex; i < documentTrendInfoList.size(); i++) {
-            DocumentTrendInfo documentTrendInfo = documentTrendInfoList.get(i);
-            if (documentTrendInfo.getTrendValue() >= TREND_MINIMAL_VALUE) {
-                result.add(documentTrendInfoList.get(i));
+        for (int i = percintileIndex; i < documentList.size(); i++) {
+            Document document = documentList.get(i);
+            if (document.getTrendValue() >= TREND_MINIMAL_VALUE) {
+                result.add(documentList.get(i));
             }
 
         }
@@ -70,12 +108,6 @@ public class DocumentTrendAggregate {
             throw new DocumentException(DocumentError.NO_DOCUMENTS_WITH_RAPID_TREND_FOUND);
         }
         return result;
-    }
-
-    private void setTrendValue() {
-        for (DocumentTrendInfo documentTrendInfo : documentTrendInfoList) {
-            documentTrendInfo.calculateTrend();
-        }
     }
 
 

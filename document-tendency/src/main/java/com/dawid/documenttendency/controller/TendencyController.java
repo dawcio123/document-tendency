@@ -1,7 +1,7 @@
 package com.dawid.documenttendency.controller;
 
 import com.dawid.documenttendency.model.DocumentDto;
-import com.dawid.documenttendency.model.DocumentTrendInfo;
+import com.dawid.documenttendency.model.Document;
 import com.dawid.documenttendency.service.TrendService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,20 +24,19 @@ public class TendencyController {
 
 
 
-    @GetMapping("/popular")
-    public List<DocumentDto> getPopularDocuments(@RequestParam(required = false) Integer resultLimit){
-        return trendService.getPopular(resultLimit);
+    @GetMapping("/popular/period")
+    public List<Document> getPopularDocuments(@RequestParam String fromDate, @RequestParam String toDate){
+        return trendService.getPopularForPeriod(fromDate,toDate);
     }
 
 
-
     @GetMapping("/trending")
-    public List<DocumentTrendInfo> getTrendingDocuments(){
+    public List<Document> getTrendingDocuments(){
         return trendService.getTrendsForPreviousWeek();
     }
 
     @GetMapping("/trending/period")
-    public List<DocumentTrendInfo> getTrendingDocumentsByPeriod(@RequestParam String fromDate, @RequestParam String toDate){
+    public List<Document> getTrendingDocumentsByPeriod(@RequestParam String fromDate, @RequestParam String toDate){
 
         return trendService.getTrendsForPeriod(fromDate,toDate);
     }

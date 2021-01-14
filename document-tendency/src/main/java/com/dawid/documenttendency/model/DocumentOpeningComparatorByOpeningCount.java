@@ -2,9 +2,9 @@ package com.dawid.documenttendency.model;
 
 import java.util.Comparator;
 
-public class OpeningComparator implements Comparator<DocumentTrendInfo> {
+public class DocumentOpeningComparatorByOpeningCount implements Comparator<Document> {
     @Override
-    public int compare(DocumentTrendInfo o1, DocumentTrendInfo o2) {
+    public int compare(Document o1, Document o2) {
         return o1.getOpeningCount() - o2.getOpeningCount();
     }
 }

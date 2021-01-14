@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
+public class Document implements Comparable<Document> {
 
     private String documentId;
     @JsonIgnore
@@ -19,9 +19,15 @@ public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
     @JsonIgnore
     private SimpleRegression r = new SimpleRegression(true);
 
-    public DocumentTrendInfo(String documentId, Map<LocalDate, Long> opensAtDate) {
+    public Document(String documentId, Map<LocalDate, Long> opensAtDate) {
         this.documentId = documentId;
         this.dateToOpeningCount = opensAtDate;
+    }
+
+    public Document(String documentId) {
+        this.documentId = documentId;
+        this.dateToOpeningCount = new HashMap<>();
+
     }
 
     public void addOpenDate(LocalDate openDate){
@@ -62,7 +68,7 @@ public class DocumentTrendInfo implements Comparable<DocumentTrendInfo> {
 
 
     @Override
-    public int compareTo(DocumentTrendInfo o){
+    public int compareTo(Document o){
         return this.getTrendValue().compareTo(o.getTrendValue());
     }
 }
