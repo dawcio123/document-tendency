@@ -17,7 +17,7 @@ public class TrendServiceImpl implements TrendService {
 
     private DocumentOpenInfoRepository documentOpenInfoRepository;
     private DocumentOpenInfoService documentOpenInfoService;
-
+    public static final double TREND_MINIMAL_VALUE = 1.0;
 
     public TrendServiceImpl(DocumentOpenInfoRepository documentOpenInfoRepository, DocumentOpenInfoService documentOpenInfoService) {
         this.documentOpenInfoRepository = documentOpenInfoRepository;
@@ -38,7 +38,7 @@ public class TrendServiceImpl implements TrendService {
     }
 
 
-    public List<Document> getPopularForPeriod(String fromDateString, String toDateString) {
+    public List<DocumentPopularDto> getPopularForPeriod(String fromDateString, String toDateString) {
 
         //validate input
         if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)){
@@ -54,7 +54,8 @@ public class TrendServiceImpl implements TrendService {
             throw new DocumentException(DATE_END_IS_BEFORE_DATE_START);
         }
 
-        return getPopulars(fromDate, toDate);
+        List<Document> documents =  getDocuments(fromDate, toDate);
+        return getPopular(documents);
     }
 
 
@@ -73,6 +74,23 @@ public class TrendServiceImpl implements TrendService {
 
         return getTrends(fromDate, toDate);
     }
+
+    public List<DocumentTrendDto> getTrendsForPeriod2(String fromDateString, String toDateString) {
+
+        if (!hasDateValidFormat(fromDateString) || !hasDateValidFormat(toDateString)){
+            throw new DocumentException(DATE_HAS_NO_VALID_FORMAT);
+        }
+
+        LocalDate fromDate = LocalDate.parse(fromDateString);
+        LocalDate toDate = LocalDate.parse(toDateString);
+
+        if (toDate.isBefore(fromDate)){
+            throw new DocumentException(DATE_END_IS_BEFORE_DATE_START);
+        }
+        List<Document> documents =  getDocumentsForPopular(fromDate, toDate);
+        return getTrends2(documents);
+    }
+
 
     private boolean hasDateValidFormat(String date) {
         String pattern = "yyyy-MM-dd";
@@ -104,7 +122,40 @@ public class TrendServiceImpl implements TrendService {
 
     }
 
-    private List<Document> getPopulars(LocalDate fromDate, LocalDate toDate) {
+    private List<DocumentPopularDto> getPopular(List<Document> documents){
+        List<DocumentPopularDto> result = new ArrayList<>();
+
+        documents.sort(new DocumentComparatorByOpeningCount().reversed());
+
+        for (Document document : documents)
+            result.add(document.createDocumentPopularDto());
+        return result;
+    }
+
+
+    private List<DocumentTrendDto> getTrends2(List<Document> documents){
+        List<DocumentTrendDto> result = new ArrayList<>();
+
+
+        Collections.sort(documents, Collections.reverseOrder());
+
+        for (Document document : documents)
+
+            if (hasDocumentTrendAboveThreshold(document)){
+                result.add(document.createDocumentTrendDto());
+            }
+
+
+        return result;
+    }
+     private boolean hasDocumentTrendAboveThreshold(Document document){
+        if (document.getTrendValue() >= TREND_MINIMAL_VALUE){
+            return true;
+        } else  return false;
+     }
+
+
+    private List<Document> getDocuments(LocalDate fromDate, LocalDate toDate) {
 
         List<String> documentsIds = documentOpenInfoService.getDocumentsIds(fromDate, toDate );
         DocumentRepository documentRepository = new DocumentRepository(documentsIds);
@@ -112,7 +163,20 @@ public class TrendServiceImpl implements TrendService {
         List<DocumentOpenInfo> documentOpenInfos = getDocumentOpenInfos(fromDate, toDate);
         documentRepository.addOpeningToDocuments(documentOpenInfos);
 
-        return documentRepository.getListWithPopular();
+        return documentRepository.getDocuments();
+
+
+    }
+
+    private List<Document> getDocumentsForPopular(LocalDate fromDate, LocalDate toDate) {
+
+        List<String> documentsIds = documentOpenInfoService.getDocumentsIds(fromDate, toDate );
+        DocumentRepository documentRepository = new DocumentRepository(documentsIds);
+
+        List<DocumentOpenInfo> documentOpenInfos = getDocumentOpenInfos(fromDate, toDate);
+        documentRepository.addOpeningToDocuments(documentOpenInfos);
+
+        return documentRepository.getDocuments();
 
 
     }

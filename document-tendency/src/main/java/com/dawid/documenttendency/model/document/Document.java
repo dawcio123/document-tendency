@@ -71,4 +71,12 @@ public class Document implements Comparable<Document> {
     public int compareTo(Document o){
         return this.getTrendValue().compareTo(o.getTrendValue());
     }
+
+    public DocumentPopularDto createDocumentPopularDto(){
+        return new DocumentPopularDto(this.documentId, this.OpeningCount);
+    }
+
+    public DocumentTrendDto createDocumentTrendDto(){
+        return new DocumentTrendDto(this.documentId, this.trendValue);
+    }
 }

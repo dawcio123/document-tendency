@@ -55,6 +55,17 @@ public class DocumentRepository {
 
     }
 
+    public List<Document> getDocuments() {
+        this.openingsSum = calculateOpeningsSum(documents);
+        setTrendValueToEachDocument();
+
+        List<Document> documentsWithOpeningAboveSetPercentile = removeDocumnetsBelowSetPercintile(documents);
+
+        return documentsWithOpeningAboveSetPercentile;
+
+    }
+
+
     private List<Document> removeDocumentsWIthLowTrendValue(List<Document> documents) {
         List<Document> result = new ArrayList<>();
 

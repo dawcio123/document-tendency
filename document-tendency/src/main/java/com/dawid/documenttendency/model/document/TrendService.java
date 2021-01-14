@@ -10,5 +10,8 @@ public interface TrendService {
     List<Document> getTrendsForPreviousWeek();
 
     List<Document> getTrendsForPeriod(String fromDate, String toDate);
-    List<Document> getPopularForPeriod(String fromDate, String toDate);
+
+    List<DocumentPopularDto> getPopularForPeriod(String fromDate, String toDate);
+
+    List<DocumentTrendDto> getTrendsForPeriod2(String fromDateString, String toDateString);
 }
