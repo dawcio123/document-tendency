@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface DocumentService {
 
+    List<DocumentPopularDto> getPopularForPreviousWeek();
 
     List<DocumentTrendDto> getTrendsForPreviousWeek();
 
-    List<DocumentPopularDto> getPopularForPreviousWeek();
 
     List<DocumentPopularDto> getPopularForPeriod(LocalDate fromDate, LocalDate toDate);
 
