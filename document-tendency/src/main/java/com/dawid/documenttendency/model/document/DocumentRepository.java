@@ -1,7 +1,5 @@
 package com.dawid.documenttendency.model.document;
 
-import com.dawid.documenttendency.exception.DocumentError;
-import com.dawid.documenttendency.exception.DocumentException;
 import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
 import com.dawid.documenttendency.util.Properties;
 
@@ -12,7 +10,7 @@ import java.util.List;
 
 public class DocumentRepository {
     private List<String> documentsIds;
-    private List<Document> documents = new ArrayList<>();
+    private List<Document> documents;
     private int openingsSum;
 
 
@@ -44,15 +42,6 @@ public class DocumentRepository {
         }
     }
 
-    public List<Document> getListWithTrends() {
-        this.openingsSum = calculateOpeningsSum(documents);
-        setTrendValueToEachDocument();
-        List<Document> documentsWithTrendAboveSetValue = removeDocumentsWIthLowTrendValue(documents);
-        List<Document> documentsWithOpeningAboveSetPercentile = removeDocumnetsBelowSetPercintile(documentsWithTrendAboveSetValue);
-        Collections.sort(documentsWithOpeningAboveSetPercentile, Collections.reverseOrder());
-        return documentsWithOpeningAboveSetPercentile;
-
-    }
 
     public List<Document> getDocuments() {
         this.openingsSum = calculateOpeningsSum(documents);
@@ -65,35 +54,10 @@ public class DocumentRepository {
     }
 
 
-    private List<Document> removeDocumentsWIthLowTrendValue(List<Document> documents) {
-        List<Document> result = new ArrayList<>();
-
-        for (Document document : documents) {
-            if (document.getTrendValue() >= Properties.TREND_MINIMAL_VALUE) {
-                result.add(document);
-            }
-        }
-
-        if (result.size() == 0) {
-            throw new DocumentException(DocumentError.NO_DOCUMENTS_WITH_RAPID_TREND_FOUND);
-        }
-
-        return result;
-    }
-
-    public List<Document> getListWithPopular() {
-        this.openingsSum = calculateOpeningsSum(documents);
-        List<Document> documentsWithOpeningAboveSetPercentile = removeDocumnetsBelowSetPercintile(documents);
-
-        documentsWithOpeningAboveSetPercentile.sort(new DocumentComparatorByOpeningCount().reversed());
-        //  Collections.sort(documents, new DocumentOpeningComparatorByOpeningCount());
-        return documentsWithOpeningAboveSetPercentile;
-
-    }
 
     private List<Document> removeDocumnetsBelowSetPercintile(List<Document> documents) {
         int percentileIndex = calculatePercentileIndex(documents);
-        return cutPercintile(documents, percentileIndex);
+        return removeValuesBelowSetPercentile(documents, percentileIndex);
     }
 
 
@@ -119,7 +83,7 @@ public class DocumentRepository {
     }
 
 
-    private List<Document> cutPercintile(List<Document> documentList, int percintileIndex) {
+    private List<Document> removeValuesBelowSetPercentile(List<Document> documentList, int percintileIndex) {
 
         if (documentList.size() == 1){
             return documentList;

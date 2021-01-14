@@ -1,13 +1,13 @@
 package com.dawid.documenttendency.util;
 
 import com.dawid.documenttendency.exception.DocumentException;
-import org.apache.commons.validator.GenericValidator;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 import static com.dawid.documenttendency.exception.DocumentError.DATE_END_IS_BEFORE_DATE_START;
-import static com.dawid.documenttendency.exception.DocumentError.DATE_HAS_NO_VALID_FORMAT;
+
 
 
 @Service

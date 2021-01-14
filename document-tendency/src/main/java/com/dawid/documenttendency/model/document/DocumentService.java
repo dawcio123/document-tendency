@@ -1,7 +1,5 @@
 package com.dawid.documenttendency.model.document;
 
-import com.dawid.documenttendency.model.document.Document;
-
 import java.time.LocalDate;
 import java.util.List;
 

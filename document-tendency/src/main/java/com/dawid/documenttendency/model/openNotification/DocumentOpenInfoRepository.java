@@ -1,6 +1,6 @@
 package com.dawid.documenttendency.model.openNotification;
 
-import com.dawid.documenttendency.model.openNotification.DocumentOpenInfo;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

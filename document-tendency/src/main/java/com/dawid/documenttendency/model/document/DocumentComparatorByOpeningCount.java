@@ -1,7 +1,5 @@
 package com.dawid.documenttendency.model.document;
 
-import com.dawid.documenttendency.model.document.Document;
-
 import java.util.Comparator;
 
 public class DocumentComparatorByOpeningCount implements Comparator<Document> {

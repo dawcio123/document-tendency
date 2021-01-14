@@ -1,6 +1,6 @@
 package com.dawid.documenttendency.model.document;
 
-import lombok.Data;
+
 
 
 public class DocumentPopularDto {
