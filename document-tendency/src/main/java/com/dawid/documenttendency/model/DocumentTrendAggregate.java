@@ -47,25 +47,43 @@ public class DocumentTrendAggregate {
     public List<Document> getListWithTrends() {
         this.openingsSum = calculateOpeningsSum(documents);
         setTrendValueToEachDocument();
-        List<Document> documentsWithOpeningAboveSetPercentile = getDocumentsWithOpeningAboveSetPercentile(documents);
+        List<Document> documentsWithTrendAboveSetValue = removeDocumentsWIthLowTrendValue(documents);
+        List<Document> documentsWithOpeningAboveSetPercentile = removeDocumnetsBelowSetPercintile(documentsWithTrendAboveSetValue);
         Collections.sort(documentsWithOpeningAboveSetPercentile, Collections.reverseOrder());
         return documentsWithOpeningAboveSetPercentile;
 
     }
 
+    private List<Document> removeDocumentsWIthLowTrendValue(List<Document> documents) {
+        List<Document> result = new ArrayList<>();
+
+        for (Document document : documents) {
+            if (document.getTrendValue() >= TREND_MINIMAL_VALUE) {
+                result.add(document);
+            }
+        }
+
+        if (result.size() == 0) {
+            throw new DocumentException(DocumentError.NO_DOCUMENTS_WITH_RAPID_TREND_FOUND);
+        }
+
+        return result;
+    }
+
     public List<Document> getListWithPopular() {
         this.openingsSum = calculateOpeningsSum(documents);
-documents.sort(new DocumentOpeningComparatorByOpeningCount().reversed());
-      //  Collections.sort(documents, new DocumentOpeningComparatorByOpeningCount());
-        return documents;
+        List<Document> documentsWithOpeningAboveSetPercentile = removeDocumnetsBelowSetPercintile(documents);
+
+        documentsWithOpeningAboveSetPercentile.sort(new DocumentOpeningComparatorByOpeningCount().reversed());
+        //  Collections.sort(documents, new DocumentOpeningComparatorByOpeningCount());
+        return documentsWithOpeningAboveSetPercentile;
 
     }
 
-    private List<Document> getDocumentsWithOpeningAboveSetPercentile(List<Document> documents){
+    private List<Document> removeDocumnetsBelowSetPercintile(List<Document> documents) {
         int percentileIndex = calculatePercentileIndex(documents);
         return cutPercintile(documents, percentileIndex);
     }
-
 
 
     private int calculateOpeningsSum(List<Document> documents) {
@@ -85,7 +103,7 @@ documents.sort(new DocumentOpeningComparatorByOpeningCount().reversed());
     }
 
     private int calculatePercentileIndex(List<Document> documents) {
-        Collections.sort(documents);
+
         return (int) Math.ceil(OPENING_PERCENTILE / 100.0 * documents.size());
 
     }
@@ -98,15 +116,13 @@ documents.sort(new DocumentOpeningComparatorByOpeningCount().reversed());
 
 
         for (int i = percintileIndex; i < documentList.size(); i++) {
-            Document document = documentList.get(i);
-            if (document.getTrendValue() >= TREND_MINIMAL_VALUE) {
-                result.add(documentList.get(i));
-            }
+
+
+            result.add(documentList.get(i));
+
 
         }
-        if (result.size() == 0) {
-            throw new DocumentException(DocumentError.NO_DOCUMENTS_WITH_RAPID_TREND_FOUND);
-        }
+
         return result;
     }
 
