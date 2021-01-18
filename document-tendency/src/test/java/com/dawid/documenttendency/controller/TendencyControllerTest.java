@@ -166,7 +166,7 @@ class TendencyControllerTest {
     void shouldReturnTrendingDocumentsForPeriod() throws Exception {
 
 
-        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-04&toDate=2021-01-10", DocumentTrendDto[].class);
+        ResponseEntity<DocumentTrendDto[]> result = testRestTemplate.getForEntity("/tendencies/trending/period?fromDate=2021-01-11&toDate=2021-01-17", DocumentTrendDto[].class);
         List<DocumentTrendDto> resultList = Arrays.asList(result.getBody());
 
         double trendValue1 = resultList.get(0).getTrendValue();
